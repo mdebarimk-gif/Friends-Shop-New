@@ -9,14 +9,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html lang="bn">
       <body className="bg-gray-100 text-gray-900 min-h-screen flex flex-col antialiased">
         <CartProvider>
-          {/* Header */}
           <header className="sticky top-0 z-50 bg-orange-600 p-3 shadow">
             <div className="max-w-7xl mx-auto flex gap-2">
               <input
@@ -24,19 +23,18 @@ export default function RootLayout({
                 placeholder="Search in Friends Shop..."
                 className="flex-1 rounded-full px-4 py-2 outline-none text-black"
               />
+
               <button className="bg-white text-orange-600 px-4 py-2 rounded-full font-bold">
                 Search
               </button>
             </div>
           </header>
 
-          {/* Main Content */}
-          <main className="flex-1 max-w-7xl mx-auto w-full p-4">
+          <main className="flex-1 max-w-7xl mx-auto w-full p-4 pb-20">
             {children}
           </main>
 
-          {/* Bottom Navigation */}
-          <footer className="fixed bottom-0 left-0 w-full bg-white border-t shadow">
+          <footer className="fixed bottom-0 left-0 w-full bg-white border-t shadow z-50">
             <div className="grid grid-cols-4 text-center py-3">
               <a href="/" className="text-orange-600 font-semibold">
                 Home
