@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "../components/CartContext";
-=======
-import React from 'react';
-import './globals.css'
->>>>>>> 52143f8 (Fix Vercel build)
 
 export const metadata: Metadata = {
   title: "Friends Shop",
@@ -21,7 +16,6 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-gray-100 text-gray-900 min-h-screen flex flex-col antialiased">
         <CartProvider>
-
           {/* Header */}
           <header className="sticky top-0 z-50 bg-orange-600 p-3 shadow">
             <div className="max-w-7xl mx-auto flex gap-2">
@@ -61,7 +55,6 @@ export default function RootLayout({
               </a>
             </div>
           </footer>
-
         </CartProvider>
       </body>
     </html>
