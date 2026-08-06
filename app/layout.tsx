@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "../components/CartContext";
+=======
+import React from 'react';
+import './globals.css'
+>>>>>>> 52143f8 (Fix Vercel build)
 
 export const metadata: Metadata = {
   title: "Friends Shop",

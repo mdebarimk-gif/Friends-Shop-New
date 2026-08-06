@@ -2,6 +2,10 @@
   "name": "friends-shop",
   "version": "0.1.0",
   "private": true,
+{
+  "name": "friends-shop",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",
@@ -26,5 +30,70 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3"
   }
+}  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "lucide-react": "^0.475.0",
+    "next": "15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  "@types/node": "^20.17.19",
+  "@types/react": "^19.0.10",
+  "@types/react-dom": "^19.0.4",
+  "eslint": "^9.20.1",
+  "eslint-config-next": "15.1.7",
+  "autoprefixer": "^10.4.20",
+  "postcss": "^8.5.3",
+  "tailwindcss": "^3.4.17",
+  "typescript": "^5.7.3"
+=======
+>>>>>>> 0b16eab (git push origin main)
+    "@types/node": "^20.17.19",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.20.1",
+    "eslint-config-next": "15.1.7",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  }
+<<<<<<< HEAD
+=======
+}{
+  "name": "friends-shop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "lucide-react": "^0.475.0",
+    "next": "15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.19",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  }
+>>>>>>> 52143f8 (Fix Vercel build)
+>>>>>>> 0b16eab (git push origin main)
 }
   
