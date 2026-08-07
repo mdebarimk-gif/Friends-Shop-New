@@ -30,7 +30,7 @@ export default function Checkout() {
 
   if (isOrdered) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', itemsCenter: 'center', justifyContent: 'center', gap: '16px', padding: '40px 20px', textAlign: 'center', minHeight: '80vh', backgroundColor: '#f4f4f4' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '40px 20px', textAlign: 'center', minHeight: '80vh', backgroundColor: '#f4f4f4' }}>
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '30px 20px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
           <div style={{ fontSize: '60px', marginBottom: '12px' }}>🎉</div>
           <h1 style={{ fontSize: '20px', color: '#16a34a', margin: '0 0 8px 0', fontWeight: 'bold' }}>অর্ডার সফল হয়েছে!</h1>
