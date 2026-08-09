@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import "./globals.css";
 import { CartProvider } from "../components/CartContext";
 
@@ -9,17 +10,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: ReactNode;
+}) {
   return (
     <html lang="bn">
       <body
-        className="bg-gray-100 text-gray-900 min-h-screen m-0 p-0 flex flex-col antialiased"
+        className="bg-gray-100 text-gray-900 min-h-screen m-0 p-0 antialiased"
         style={{ fontFamily: "sans-serif" }}
       >
         <CartProvider>
-
           {/* ==================== TOP SEARCH BAR ==================== */}
           <header
             style={{
@@ -27,11 +27,11 @@ export default function RootLayout({
               top: 0,
               zIndex: 50,
               width: "100%",
-              height: "56px",
               backgroundColor: "#ff4600",
               padding: "8px 12px",
               boxSizing: "border-box",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.12)",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              height: "56px",
               display: "flex",
               alignItems: "center",
             }}
@@ -44,14 +44,13 @@ export default function RootLayout({
                 gap: "8px",
               }}
             >
-              {/* Search Input */}
               <div
                 style={{
                   display: "flex",
                   flex: 1,
                   backgroundColor: "#ffffff",
                   borderRadius: "20px",
-                  padding: "2px 4px 2px 12px",
+                  padding: "0 10px",
                   alignItems: "center",
                   height: "36px",
                   boxSizing: "border-box",
@@ -59,7 +58,7 @@ export default function RootLayout({
               >
                 <span
                   style={{
-                    fontSize: "16px",
+                    fontSize: "15px",
                     marginRight: "6px",
                   }}
                 >
@@ -73,14 +72,13 @@ export default function RootLayout({
                     width: "100%",
                     border: "none",
                     outline: "none",
-                    fontSize: "13px",
-                    color: "#333333",
                     backgroundColor: "transparent",
+                    color: "#333333",
+                    fontSize: "14px",
                   }}
                 />
               </div>
 
-              {/* Search Button */}
               <button
                 type="button"
                 style={{
@@ -90,8 +88,8 @@ export default function RootLayout({
                   borderRadius: "20px",
                   height: "36px",
                   padding: "0 14px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
+                  fontSize: "13px",
+                  fontWeight: "700",
                   cursor: "pointer",
                 }}
               >
@@ -105,7 +103,7 @@ export default function RootLayout({
             className="flex-1 mx-auto w-full"
             style={{
               boxSizing: "border-box",
-              paddingBottom: "70px",
+              paddingBottom: "72px",
             }}
           >
             {children}
@@ -119,16 +117,17 @@ export default function RootLayout({
               left: 0,
               zIndex: 50,
               width: "100%",
-              height: "58px",
+              height: "64px",
               backgroundColor: "#ffffff",
               borderTop: "1px solid #e5e5e5",
-              boxShadow: "0 -2px 10px rgba(0,0,0,0.08)",
+              boxShadow: "0 -2px 10px rgba(0,0,0,0.06)",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-around",
+              boxSizing: "border-box",
             }}
           >
-            {/* Home */}
+            {/* For You */}
             <a
               href="/"
               style={{
@@ -140,19 +139,24 @@ export default function RootLayout({
                 justifyContent: "center",
                 textDecoration: "none",
                 color: "#ff4600",
+                fontWeight: "600",
               }}
             >
-              <span style={{ fontSize: "20px", lineHeight: "20px" }}>
-                🏠
-              </span>
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 3 3 10v10a1 1 0 0 0 1 1h6v-6h4v6h6a1 1 0 0 0 1-1V10l-9-7z" />
+              </svg>
               <span
                 style={{
-                  fontSize: "10px",
-                  fontWeight: "600",
+                  fontSize: "11px",
                   marginTop: "3px",
                 }}
               >
-                Home
+                For You
               </span>
             </a>
 
@@ -170,13 +174,22 @@ export default function RootLayout({
                 color: "#757575",
               }}
             >
-              <span style={{ fontSize: "20px", lineHeight: "20px" }}>
-                ☰
-              </span>
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <path d="M4 6h16" />
+                <path d="M4 12h16" />
+                <path d="M4 18h16" />
+              </svg>
               <span
                 style={{
-                  fontSize: "10px",
-                  fontWeight: "500",
+                  fontSize: "11px",
                   marginTop: "3px",
                 }}
               >
@@ -199,14 +212,47 @@ export default function RootLayout({
                 position: "relative",
               }}
             >
-              <span style={{ fontSize: "20px", lineHeight: "20px" }}>
-                🛒
-              </span>
+              <div style={{ position: "relative" }}>
+                <svg
+                  width="23"
+                  height="23"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M6 8h12l1 12H5L6 8z" />
+                  <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+                </svg>
+
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "-7px",
+                    right: "-9px",
+                    minWidth: "17px",
+                    height: "17px",
+                    padding: "0 4px",
+                    backgroundColor: "#ff4600",
+                    color: "#ffffff",
+                    borderRadius: "10px",
+                    fontSize: "10px",
+                    fontWeight: "700",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  0
+                </span>
+              </div>
 
               <span
                 style={{
-                  fontSize: "10px",
-                  fontWeight: "500",
+                  fontSize: "11px",
                   marginTop: "3px",
                 }}
               >
@@ -228,13 +274,23 @@ export default function RootLayout({
                 color: "#757575",
               }}
             >
-              <span style={{ fontSize: "20px", lineHeight: "20px" }}>
-                👤
-              </span>
+              <svg
+                width="23"
+                height="23"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21a8 8 0 0 1 16 0" />
+              </svg>
+
               <span
                 style={{
-                  fontSize: "10px",
-                  fontWeight: "500",
+                  fontSize: "11px",
                   marginTop: "3px",
                 }}
               >
@@ -242,66 +298,6 @@ export default function RootLayout({
               </span>
             </a>
           </nav>
-
-        </CartProvider>
-      </body>
-    </html>
-  );
-}import type { Metadata } from "next";
-import "./globals.css";
-import { CartProvider } from "../components/CartContext";
-
-export const metadata: Metadata = {
-  title: "Friends Shop",
-  description: "Friends Shop Ecommerce",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="bn">
-      <body className="bg-gray-100 text-gray-900 min-h-screen flex flex-col antialiased">
-        <CartProvider>
-          <header className="sticky top-0 z-50 bg-orange-600 p-3 shadow">
-            <div className="max-w-7xl mx-auto flex gap-2">
-              <input
-                type="text"
-                placeholder="Search in Friends Shop..."
-                className="flex-1 rounded-full px-4 py-2 outline-none text-black"
-              />
-
-              <button className="bg-white text-orange-600 px-4 py-2 rounded-full font-bold">
-                Search
-              </button>
-            </div>
-          </header>
-
-          <main className="flex-1 max-w-7xl mx-auto w-full p-4 pb-20">
-            {children}
-          </main>
-
-          <footer className="fixed bottom-0 left-0 w-full bg-white border-t shadow z-50">
-            <div className="grid grid-cols-4 text-center py-3">
-              <a href="/" className="text-orange-600 font-semibold">
-                Home
-              </a>
-
-              <a href="/search" className="text-gray-600">
-                Categories
-              </a>
-
-              <a href="/cart" className="text-gray-600">
-                Cart
-              </a>
-
-              <a href="/login" className="text-gray-600">
-                Account
-              </a>
-            </div>
-          </footer>
         </CartProvider>
       </body>
     </html>
