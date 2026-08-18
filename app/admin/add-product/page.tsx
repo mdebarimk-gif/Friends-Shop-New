@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { supabase } from '../../../lib/supabase';
 
 export default function AddProduct() {
-  // ফর্ম স্টেট হ্যান্ডেল করার জন্য
   const [productData, setProductData] = useState({
     title: '',
     price: '',
@@ -14,18 +14,43 @@ export default function AddProduct() {
     description: '',
   });
 
-  const [imagePreview, setImagePreview] = useState('📦');
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!productData.title || !productData.price || !productData.stock) {
-      alert('দয়া করে প্রয়োজনীয় সব তথ্য পূরণ করুন!');
+      setMessage('দয়া করে প্রয়োজনীয় তথ্য পূরণ করুন।');
       return;
     }
-    
-    alert(`সফলভাবে পণ্য যুক্ত হয়েছে!\n\nনাম: ${productData.title}\nমূল্য: ৳${productData.price}\nস্টক: ${productData.stock} টি\nক্যাটাগরি: ${productData.category}`);
-    
-    // ফর্ম রিসেট করা
+
+    setSaving(true);
+    setMessage('');
+
+    const { error } = await supabase.from('products').insert({
+      title: productData.title,
+      price: Number(productData.price),
+      old_price: productData.oldPrice
+        ? Number(productData.oldPrice)
+        : null,
+      category: productData.category,
+      stock: Number(productData.stock),
+      tag: productData.tag,
+      description: productData.description,
+      image_url: null,
+    });
+
+    setSaving(false);
+
+    if (error) {
+      console.error(error);
+      setMessage('❌ পণ্য সংরক্ষণ করা যায়নি।');
+      return;
+    }
+
+    setMessage('✅ পণ্য সফলভাবে Supabase-এ সংরক্ষণ হয়েছে!');
+
     setProductData({
       title: '',
       price: '',
@@ -35,159 +60,228 @@ export default function AddProduct() {
       tag: 'Free Shipping 🚚',
       description: '',
     });
-    setImagePreview('📦');
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      gap: '14px', 
-      backgroundColor: '#f4f4f4', 
-      minHeight: '100vh',
-      padding: '12px',
-      boxSizing: 'border-box',
-      width: '100%'
-    }}>
-      
-      {/* ==================== FORM HEADER ==================== */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e0e0e0', paddingBottom: '10px' }}>
-        <a href="/admin" style={{ textDecoration: 'none', fontSize: '18px', color: '#ff4600' }}>←</a>
-        <div>
-          <h1 style={{ fontSize: '18px', fontWeight: '800', margin: 0, color: '#212121' }}>Add New Product</h1>
-          <span style={{ fontSize: '11px', color: '#757575' }}>ইনভেন্টরিতে নতুন পণ্য যোগ করুন</span>
-        </div>
+    <main
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#f4f4f4',
+        padding: '12px',
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: '#fff',
+          borderRadius: '10px',
+          padding: '15px',
+          marginBottom: '12px',
+        }}
+      >
+        <h1
+          style={{
+            margin: 0,
+            fontSize: '20px',
+            fontWeight: '800',
+          }}
+        >
+          Add New Product
+        </h1>
+
+        <p
+          style={{
+            margin: '5px 0 0',
+            fontSize: '12px',
+            color: '#777',
+          }}
+        >
+          ইনভেন্টরিতে নতুন পণ্য যোগ করুন
+        </p>
       </div>
 
-      {/* ==================== FORM CONTENT ==================== */}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        
-        {/* Product Image Upload Section */}
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '10px', padding: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          <div style={{ backgroundColor: '#f9f9f9', width: '90px', height: '90px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '45px', border: '1px dashed #d9d9d9' }}>
-            {imagePreview}
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          backgroundColor: '#fff',
+          borderRadius: '10px',
+          padding: '15px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+        }}
+      >
+        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+          পণ্যের নাম *
+          <input
+            type="text"
+            value={productData.title}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                title: e.target.value,
+              })
+            }
+            placeholder="Product name"
+            required
+            style={inputStyle}
+          />
+        </label>
+
+        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+          বিক্রয় মূল্য *
+          <input
+            type="number"
+            value={productData.price}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                price: e.target.value,
+              })
+            }
+            placeholder="Price"
+            required
+            style={inputStyle}
+          />
+        </label>
+
+        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+          পুরাতন মূল্য
+          <input
+            type="number"
+            value={productData.oldPrice}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                oldPrice: e.target.value,
+              })
+            }
+            placeholder="Old price"
+            style={inputStyle}
+          />
+        </label>
+
+        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+          ক্যাটাগরি
+          <select
+            value={productData.category}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                category: e.target.value,
+              })
+            }
+            style={inputStyle}
+          >
+            <option value="fashion">Fashion</option>
+            <option value="gadgets">Gadgets</option>
+            <option value="mart">Mart</option>
+            <option value="beauty">Beauty</option>
+          </select>
+        </label>
+
+        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+          স্টক সংখ্যা *
+          <input
+            type="number"
+            value={productData.stock}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                stock: e.target.value,
+              })
+            }
+            placeholder="Stock"
+            required
+            style={inputStyle}
+          />
+        </label>
+
+        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+          পণ্যের ট্যাগ
+          <select
+            value={productData.tag}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                tag: e.target.value,
+              })
+            }
+            style={inputStyle}
+          >
+            <option>Free Shipping 🚚</option>
+            <option>Free Gift 🎁</option>
+            <option>Best Seller 🔥</option>
+            <option>Top Deal ⚡</option>
+          </select>
+        </label>
+
+        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+          পণ্যের বিবরণ
+          <textarea
+            value={productData.description}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                description: e.target.value,
+              })
+            }
+            placeholder="Product description"
+            rows={4}
+            style={{
+              ...inputStyle,
+              resize: 'vertical',
+            }}
+          />
+        </label>
+
+        {message && (
+          <div
+            style={{
+              padding: '10px',
+              borderRadius: '7px',
+              backgroundColor: message.startsWith('✅')
+                ? '#e8f5e9'
+                : '#ffebee',
+              color: message.startsWith('✅')
+                ? '#2e7d32'
+                : '#c62828',
+              fontSize: '13px',
+              fontWeight: '700',
+            }}
+          >
+            {message}
           </div>
-          <label style={{ backgroundColor: '#fff0e6', color: '#ff4600', padding: '6px 16px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', border: '1px solid #ffbb96' }}>
-            📷 Upload Product Image
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={() => setImagePreview('🖼️')} // মোবাইলে ফাইল সিলেক্টের ডামি সিমুলেশন
-              style={{ display: 'none' }} 
-            />
-          </label>
-        </div>
+        )}
 
-        {/* Core Product Info */}
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '10px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label style={{ fontSize: '12px', color: '#616161', fontWeight: '600' }}>পণ্যের নাম (Product Title) *</label>
-            <input 
-              type="text" 
-              placeholder="e.g. Premium Wireless Headphone" 
-              required
-              value={productData.title}
-              onChange={(e) => setProductData({...productData, title: e.target.value})}
-              style={{ padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', fontSize: '13px', outline: 'none' }}
-            />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontSize: '12px', color: '#616161', fontWeight: '600' }}>বিক্রয় মূল্য (Price) *</label>
-              <input 
-                type="number" 
-                placeholder="৳ Price" 
-                required
-                value={productData.price}
-                onChange={(e) => setProductData({...productData, price: e.target.value})}
-                style={{ padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', fontSize: '13px', outline: 'none' }}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontSize: '12px', color: '#616161', fontWeight: '600' }}>আসল মূল্য (Old Price)</label>
-              <input 
-                type="number" 
-                placeholder="৳ Old Price" 
-                value={productData.oldPrice}
-                onChange={(e) => setProductData({...productData, oldPrice: e.target.value})}
-                style={{ padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', fontSize: '13px', outline: 'none' }}
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontSize: '12px', color: '#616161', fontWeight: '600' }}>ক্যাটাগরি (Category)</label>
-              <select 
-                value={productData.category}
-                onChange={(e) => setProductData({...productData, category: e.target.value})}
-                style={{ padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', fontSize: '13px', backgroundColor: '#ffffff', outline: 'none' }}
-              >
-                <option value="fashion">Fashion</option>
-                <option value="gadgets">Gadgets</option>
-                <option value="mart">Mart</option>
-                <option value="beauty">Beauty</option>
-              </select>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontSize: '12px', color: '#616161', fontWeight: '600' }}>স্টক সংখ্যা (Stock) *</label>
-              <input 
-                type="number" 
-                placeholder="Quantity" 
-                required
-                value={productData.stock}
-                onChange={(e) => setProductData({...productData, stock: e.target.value})}
-                style={{ padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', fontSize: '13px', outline: 'none' }}
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label style={{ fontSize: '12px', color: '#616161', fontWeight: '600' }}>প্রোডাক্ট ট্যাগ (Product Tag)</label>
-            <select 
-              value={productData.tag}
-              onChange={(e) => setProductData({...productData, tag: e.target.value})}
-              style={{ padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', fontSize: '13px', backgroundColor: '#ffffff', outline: 'none' }}
-            >
-              <option value="Free Shipping 🚚">Free Shipping 🚚</option>
-              <option value="Free Gift 🎁">Free Gift 🎁</option>
-              <option value="Best Seller 🔥">Best Seller 🔥</option>
-              <option value="Top Deal ⚡">Top Deal ⚡</option>
-            </select>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label style={{ fontSize: '12px', color: '#616161', fontWeight: '600' }}>পণ্যের বিবরণ (Description)</label>
-            <textarea 
-              placeholder="Enter product details specifications..." 
-              rows={3}
-              value={productData.description}
-              onChange={(e) => setProductData({...productData, description: e.target.value})}
-              style={{ padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', fontSize: '13px', fontFamily: 'sans-serif', outline: 'none', resize: 'none' }}
-            />
-          </div>
-
-        </div>
-
-        {/* Submit Button */}
-        <button type="submit" style={{
-          backgroundColor: '#ff4600',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '12px',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          boxShadow: '0 2px 6px rgba(255,70,0,0.15)',
-          marginTop: '4px'
-        }}>
-          🚀 Submit & Publish Product
+        <button
+          type="submit"
+          disabled={saving}
+          style={{
+            backgroundColor: saving ? '#999' : '#ff4600',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '13px',
+            fontSize: '14px',
+            fontWeight: '800',
+          }}
+        >
+          {saving ? 'Saving...' : '🚀 Submit & Publish Product'}
         </button>
-
       </form>
-    </div>
+    </main>
   );
 }
+
+const inputStyle: React.CSSProperties = {
+  display: 'block',
+  width: '100%',
+  marginTop: '5px',
+  padding: '11px',
+  boxSizing: 'border-box',
+  border: '1px solid #ddd',
+  borderRadius: '7px',
+  fontSize: '14px',
+  outline: 'none',
+  backgroundColor: '#fff',
+};

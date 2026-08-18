@@ -21,7 +21,7 @@ export default function RootLayout({
         style={{ fontFamily: "sans-serif" }}
       >
         <CartProvider>
-
+          {/* Top Search Bar */}
           <header
             style={{
               position: "sticky",
@@ -40,8 +40,80 @@ export default function RootLayout({
             <SearchBar />
           </header>
 
-          {children}
+          {/* Main Content */}
+          <main style={{ paddingBottom: "70px" }}>
+            {children}
+          </main>
 
+          {/* Bottom Navigation */}
+          <nav
+            style={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "60px",
+              backgroundColor: "#ffffff",
+              borderTop: "1px solid #e5e5e5",
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "center",
+              zIndex: 100,
+              boxShadow: "0 -2px 8px rgba(0,0,0,0.08)",
+            }}
+          >
+            <a
+              href="/"
+              style={{
+                textDecoration: "none",
+                color: "#555",
+                textAlign: "center",
+                fontSize: "11px",
+              }}
+            >
+              <div style={{ fontSize: "22px" }}>🏠</div>
+              Home
+            </a>
+
+            <a
+              href="/search"
+              style={{
+                textDecoration: "none",
+                color: "#555",
+                textAlign: "center",
+                fontSize: "11px",
+              }}
+            >
+              <div style={{ fontSize: "22px" }}>🔍</div>
+              Search
+            </a>
+
+            <a
+              href="/cart"
+              style={{
+                textDecoration: "none",
+                color: "#555",
+                textAlign: "center",
+                fontSize: "11px",
+              }}
+            >
+              <div style={{ fontSize: "22px" }}>🛒</div>
+              Cart
+            </a>
+
+            <a
+              href="/admin"
+              style={{
+                textDecoration: "none",
+                color: "#555",
+                textAlign: "center",
+                fontSize: "11px",
+              }}
+            >
+              <div style={{ fontSize: "22px" }}>👤</div>
+              Account
+            </a>
+          </nav>
         </CartProvider>
       </body>
     </html>
