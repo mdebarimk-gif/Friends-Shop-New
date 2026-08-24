@@ -14,8 +14,30 @@ export default function AddProduct() {
     description: '',
   });
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMessage('❌ শুধু ছবি নির্বাচন করুন।');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage('❌ ছবির সাইজ সর্বোচ্চ 5 MB হতে পারবে।');
+      return;
+    }
+
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    setMessage('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,38 +50,78 @@ export default function AddProduct() {
     setSaving(true);
     setMessage('');
 
-    const { error } = await supabase.from('products').insert({
-      title: productData.title,
-      price: Number(productData.price),
-      old_price: productData.oldPrice
-        ? Number(productData.oldPrice)
-        : null,
-      category: productData.category,
-      stock: Number(productData.stock),
-      tag: productData.tag,
-      description: productData.description,
-      image_url: null,
-    });
+    let imageUrl: string | null = null;
 
-    setSaving(false);
+    try {
+      // ছবি থাকলে Supabase Storage-এ আপলোড
+      if (imageFile) {
+        const fileExt = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
 
-    if (error) {
+        const fileName = `${Date.now()}-${crypto.randomUUID()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(fileName, imageFile, {
+            cacheControl: '3600',
+            upsert: false,
+            contentType: imageFile.type,
+          });
+
+        if (uploadError) {
+          console.error('Image upload error:', uploadError);
+          setMessage('❌ ছবি আপলোড করা যায়নি।');
+          setSaving(false);
+          return;
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(fileName);
+
+        imageUrl = publicUrlData.publicUrl;
+      }
+
+      // Product database-এ সংরক্ষণ
+      const { error } = await supabase.from('products').insert({
+        title: productData.title,
+        price: Number(productData.price),
+        old_price: productData.oldPrice
+          ? Number(productData.oldPrice)
+          : null,
+        category: productData.category,
+        stock: Number(productData.stock),
+        tag: productData.tag,
+        description: productData.description,
+        image_url: imageUrl,
+      });
+
+      if (error) {
+        console.error('Product insert error:', error);
+        setMessage('❌ পণ্য সংরক্ষণ করা যায়নি।');
+        setSaving(false);
+        return;
+      }
+
+      setMessage('✅ পণ্য ও ছবি সফলভাবে প্রকাশ হয়েছে!');
+
+      setProductData({
+        title: '',
+        price: '',
+        oldPrice: '',
+        category: 'fashion',
+        stock: '',
+        tag: 'Free Shipping 🚚',
+        description: '',
+      });
+
+      setImageFile(null);
+      setImagePreview('');
+    } catch (error) {
       console.error(error);
-      setMessage('❌ পণ্য সংরক্ষণ করা যায়নি।');
-      return;
+      setMessage('❌ একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।');
     }
 
-    setMessage('✅ পণ্য সফলভাবে Supabase-এ সংরক্ষণ হয়েছে!');
-
-    setProductData({
-      title: '',
-      price: '',
-      oldPrice: '',
-      category: 'fashion',
-      stock: '',
-      tag: 'Free Shipping 🚚',
-      description: '',
-    });
+    setSaving(false);
   };
 
   return (
@@ -110,6 +172,43 @@ export default function AddProduct() {
           gap: '12px',
         }}
       >
+        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+          পণ্যের ছবি
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{
+              display: 'block',
+              width: '100%',
+              marginTop: '7px',
+              fontSize: '13px',
+            }}
+          />
+        </label>
+
+        {imagePreview && (
+          <div
+            style={{
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              padding: '8px',
+              backgroundColor: '#fafafa',
+            }}
+          >
+            <img
+              src={imagePreview}
+              alt="Product preview"
+              style={{
+                width: '100%',
+                maxHeight: '220px',
+                objectFit: 'contain',
+                borderRadius: '6px',
+              }}
+            />
+          </div>
+        )}
+
         <label style={{ fontSize: '13px', fontWeight: '700' }}>
           পণ্যের নাম *
           <input
@@ -183,6 +282,7 @@ export default function AddProduct() {
           স্টক সংখ্যা *
           <input
             type="number"
+            min="0"
             value={productData.stock}
             onChange={(e) =>
               setProductData({
