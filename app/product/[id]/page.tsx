@@ -28,8 +28,7 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [adding, setAdding] = useState(false);
-  const [buying, setBuying] = useState(false);
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -52,8 +51,8 @@ export default function ProductDetails() {
         .eq('id', productId)
         .single();
 
-      if (error) {
-        console.error('Product load error:', error);
+      if (error || !data) {
+        console.error(error);
         setError('পণ্যটি খুঁজে পাওয়া যায়নি।');
         setLoading(false);
         return;
@@ -66,10 +65,6 @@ export default function ProductDetails() {
     loadProduct();
   }, [id]);
 
-  // =========================
-  // LOADING
-  // =========================
-
   if (loading) {
     return (
       <main
@@ -79,36 +74,14 @@ export default function ProductDetails() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '20px',
         }}
       >
-        <div
-          style={{
-            backgroundColor: '#ffffff',
-            padding: '25px',
-            borderRadius: '12px',
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ fontSize: '35px' }}>⏳</div>
-
-          <p
-            style={{
-              margin: '10px 0 0',
-              fontWeight: '700',
-              color: '#212121',
-            }}
-          >
-            পণ্যের তথ্য লোড হচ্ছে...
-          </p>
-        </div>
+        <p style={{ fontWeight: '700', fontSize: '15px' }}>
+          ⏳ পণ্যের তথ্য লোড হচ্ছে...
+        </p>
       </main>
     );
   }
-
-  // =========================
-  // ERROR
-  // =========================
 
   if (error || !product) {
     return (
@@ -117,24 +90,22 @@ export default function ProductDetails() {
           minHeight: '100vh',
           backgroundColor: '#f4f4f4',
           padding: '30px 15px',
-          boxSizing: 'border-box',
           textAlign: 'center',
         }}
       >
         <div
           style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '12px',
-            padding: '30px 15px',
+            backgroundColor: '#fff',
+            borderRadius: '10px',
+            padding: '25px 15px',
           }}
         >
-          <div style={{ fontSize: '50px' }}>😕</div>
+          <div style={{ fontSize: '45px' }}>😕</div>
 
           <h1
             style={{
               fontSize: '18px',
               margin: '10px 0',
-              color: '#212121',
             }}
           >
             {error || 'পণ্য পাওয়া যায়নি'}
@@ -145,10 +116,10 @@ export default function ProductDetails() {
             style={{
               marginTop: '10px',
               backgroundColor: '#ff4600',
-              color: '#ffffff',
+              color: '#fff',
               border: 'none',
-              padding: '11px 20px',
-              borderRadius: '8px',
+              padding: '10px 18px',
+              borderRadius: '7px',
               fontWeight: '700',
               cursor: 'pointer',
             }}
@@ -160,10 +131,6 @@ export default function ProductDetails() {
     );
   }
 
-  // =========================
-  // DISCOUNT
-  // =========================
-
   const discount =
     product.old_price && product.old_price > product.price
       ? Math.round(
@@ -173,10 +140,6 @@ export default function ProductDetails() {
         )
       : 0;
 
-  // =========================
-  // STOCK
-  // =========================
-
   const stockText =
     product.stock > 0
       ? product.stock <= 5
@@ -184,19 +147,14 @@ export default function ProductDetails() {
         : `In Stock (${product.stock})`
       : 'Out of Stock';
 
-  const outOfStock = product.stock <= 0;
-
   // =========================
   // ADD TO CART
   // =========================
-
   const handleAddToCart = () => {
-    if (outOfStock) {
+    if (product.stock <= 0) {
       alert('এই পণ্যটি বর্তমানে Stock-এ নেই।');
       return;
     }
-
-    setAdding(true);
 
     for (let i = 0; i < quantity; i++) {
       addToCart({
@@ -207,23 +165,21 @@ export default function ProductDetails() {
       });
     }
 
+    setAdded(true);
+
     setTimeout(() => {
-      setAdding(false);
-      alert(`🛒 ${quantity}টি পণ্য Cart-এ যোগ হয়েছে।`);
-    }, 300);
+      setAdded(false);
+    }, 2000);
   };
 
   // =========================
   // BUY NOW
   // =========================
-
   const handleBuyNow = () => {
-    if (outOfStock) {
+    if (product.stock <= 0) {
       alert('এই পণ্যটি বর্তমানে Stock-এ নেই।');
       return;
     }
-
-    setBuying(true);
 
     for (let i = 0; i < quantity; i++) {
       addToCart({
@@ -234,32 +190,8 @@ export default function ProductDetails() {
       });
     }
 
-    setTimeout(() => {
-      router.push('/checkout');
-    }, 300);
+    router.push('/cart');
   };
-
-  // =========================
-  // QUANTITY
-  // =========================
-
-  const decreaseQuantity = () => {
-    setQuantity((q) => Math.max(1, q - 1));
-  };
-
-  const increaseQuantity = () => {
-    if (product.stock <= 0) return;
-
-    setQuantity((q) =>
-      Math.min(product.stock, q + 1)
-    );
-  };
-
-  // =========================
-  // TOTAL PRICE
-  // =========================
-
-  const totalPrice = product.price * quantity;
 
   return (
     <div
@@ -277,7 +209,6 @@ export default function ProductDetails() {
       {/* =========================
           PRODUCT IMAGE
       ========================= */}
-
       <div
         style={{
           backgroundColor: '#ffffff',
@@ -287,7 +218,6 @@ export default function ProductDetails() {
           justifyContent: 'center',
           padding: '15px',
           boxSizing: 'border-box',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
         }}
       >
         {product.image_url ? (
@@ -316,7 +246,6 @@ export default function ProductDetails() {
       {/* =========================
           PRICE & TITLE
       ========================= */}
-
       <div
         style={{
           backgroundColor: '#ffffff',
@@ -404,7 +333,8 @@ export default function ProductDetails() {
 
           <span
             style={{
-              color: outOfStock ? '#d32f2f' : '#2ec4b6',
+              color:
+                product.stock > 0 ? '#2ec4b6' : '#d32f2f',
               fontWeight: 'bold',
             }}
           >
@@ -440,7 +370,6 @@ export default function ProductDetails() {
       {/* =========================
           QUANTITY
       ========================= */}
-
       <div
         style={{
           backgroundColor: '#ffffff',
@@ -448,30 +377,17 @@ export default function ProductDetails() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '10px',
         }}
       >
-        <div>
-          <div
-            style={{
-              fontSize: '13px',
-              fontWeight: '700',
-              color: '#212121',
-            }}
-          >
-            Quantity
-          </div>
-
-          <div
-            style={{
-              fontSize: '12px',
-              color: '#757575',
-              marginTop: '3px',
-            }}
-          >
-            মোট: ৳{totalPrice}
-          </div>
-        </div>
+        <span
+          style={{
+            fontSize: '13px',
+            fontWeight: '700',
+            color: '#212121',
+          }}
+        >
+          Quantity
+        </span>
 
         <div
           style={{
@@ -483,7 +399,9 @@ export default function ProductDetails() {
           }}
         >
           <button
-            onClick={decreaseQuantity}
+            onClick={() =>
+              setQuantity((q) => Math.max(1, q - 1))
+            }
             style={{
               border: 'none',
               backgroundColor: '#f5f5f5',
@@ -493,7 +411,7 @@ export default function ProductDetails() {
               cursor: 'pointer',
             }}
           >
-            -
+            −
           </button>
 
           <span
@@ -502,16 +420,21 @@ export default function ProductDetails() {
               fontSize: '14px',
               fontWeight: 'bold',
               color: '#212121',
-              minWidth: '20px',
-              textAlign: 'center',
             }}
           >
             {quantity}
           </span>
 
           <button
-            onClick={increaseQuantity}
-            disabled={outOfStock || quantity >= product.stock}
+            onClick={() =>
+              setQuantity((q) =>
+                Math.min(
+                  product.stock > 0 ? product.stock : 1,
+                  q + 1
+                )
+              )
+            }
+            disabled={product.stock <= 0}
             style={{
               border: 'none',
               backgroundColor: '#f5f5f5',
@@ -519,13 +442,9 @@ export default function ProductDetails() {
               fontSize: '16px',
               fontWeight: 'bold',
               cursor:
-                !outOfStock && quantity < product.stock
+                product.stock > 0
                   ? 'pointer'
                   : 'not-allowed',
-              opacity:
-                !outOfStock && quantity < product.stock
-                  ? 1
-                  : 0.5,
             }}
           >
             +
@@ -536,7 +455,6 @@ export default function ProductDetails() {
       {/* =========================
           DESCRIPTION
       ========================= */}
-
       <div
         style={{
           backgroundColor: '#ffffff',
@@ -586,9 +504,8 @@ export default function ProductDetails() {
       </div>
 
       {/* =========================
-          FIXED BOTTOM BUTTONS
+          BOTTOM BUTTONS
       ========================= */}
-
       <div
         style={{
           position: 'fixed',
@@ -606,10 +523,8 @@ export default function ProductDetails() {
           boxShadow: '0 -4px 12px rgba(0,0,0,0.08)',
         }}
       >
-        {/* CHAT */}
-
+        {/* Chat */}
         <button
-          onClick={() => alert('Customer support শীঘ্রই চালু হবে।')}
           style={{
             backgroundColor: '#fff0e6',
             border: 'none',
@@ -624,49 +539,55 @@ export default function ProductDetails() {
         </button>
 
         {/* ADD TO CART */}
-
         <button
           onClick={handleAddToCart}
-          disabled={outOfStock || adding || buying}
+          disabled={product.stock <= 0}
           style={{
             flex: 1,
             backgroundColor:
-              outOfStock || adding ? '#999' : '#ff5500',
+              product.stock <= 0
+                ? '#999'
+                : added
+                ? '#2e7d32'
+                : '#ff5500',
             color: '#ffffff',
             border: 'none',
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: 'bold',
             cursor:
-              outOfStock || adding
-                ? 'not-allowed'
-                : 'pointer',
+              product.stock > 0
+                ? 'pointer'
+                : 'not-allowed',
           }}
         >
-          {adding ? 'যোগ হচ্ছে...' : 'Add to Cart'}
+          {product.stock <= 0
+            ? 'Out of Stock'
+            : added
+            ? '✓ Added to Cart'
+            : '🛒 Add to Cart'}
         </button>
 
         {/* BUY NOW */}
-
         <button
           onClick={handleBuyNow}
-          disabled={outOfStock || adding || buying}
+          disabled={product.stock <= 0}
           style={{
             flex: 1,
             backgroundColor:
-              outOfStock || buying ? '#999' : '#ff1447',
+              product.stock > 0 ? '#ff1447' : '#999',
             color: '#ffffff',
             border: 'none',
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: 'bold',
             cursor:
-              outOfStock || buying
-                ? 'not-allowed'
-                : 'pointer',
+              product.stock > 0
+                ? 'pointer'
+                : 'not-allowed',
           }}
         >
-          {buying ? 'অপেক্ষা করুন...' : 'Buy Now'}
+          🚀 Buy Now
         </button>
       </div>
     </div>
