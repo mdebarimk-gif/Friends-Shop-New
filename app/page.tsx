@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useCart } from '../components/CartContext';
 
 type Product = {
   id: number;
@@ -30,8 +31,12 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { addToCart } = useCart();
+
   useEffect(() => {
     async function loadProducts() {
+      setLoading(true);
+
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -49,18 +54,36 @@ export default function Home() {
     loadProducts();
   }, []);
 
+  const handleAddToCart = (product: Product) => {
+    if (product.stock <= 0) {
+      alert('এই পণ্যটি বর্তমানে Stock-এ নেই।');
+      return;
+    }
+
+    addToCart({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      image: product.image_url || '',
+    });
+
+    alert(`🛒 "${product.title}" Cart-এ যোগ হয়েছে!`);
+  };
+
   return (
     <main
       style={{
         minHeight: '100vh',
         backgroundColor: '#f4f4f4',
         padding: '12px',
+        boxSizing: 'border-box',
       }}
     >
       {/* HERO */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #f50 0%, #ff85c0 100%)',
+          background:
+            'linear-gradient(135deg, #f50 0%, #ff85c0 100%)',
           borderRadius: '12px',
           padding: '20px',
           color: '#fff',
@@ -103,10 +126,22 @@ export default function Home() {
         }}
       >
         <div>
-          <div style={{ fontWeight: '700', fontSize: '13px' }}>
+          <div
+            style={{
+              fontWeight: '700',
+              fontSize: '13px',
+            }}
+          >
             Claim Vouchers to Save More!
           </div>
-          <div style={{ color: '#f50', fontSize: '11px', marginTop: '3px' }}>
+
+          <div
+            style={{
+              color: '#f50',
+              fontSize: '11px',
+              marginTop: '3px',
+            }}
+          >
             ৳৪০ Free Shipping • ৫% OFF
           </div>
         </div>
@@ -173,14 +208,20 @@ export default function Home() {
             >
               {categoryEmoji[key]}
             </div>
-            <span style={{ fontSize: '11px', fontWeight: '600' }}>
+
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: '600',
+              }}
+            >
               {name}
             </span>
           </a>
         ))}
       </div>
 
-      {/* PRODUCTS */}
+      {/* PRODUCTS HEADER */}
       <div
         style={{
           display: 'flex',
@@ -189,7 +230,12 @@ export default function Home() {
           marginBottom: '10px',
         }}
       >
-        <h2 style={{ fontSize: '16px', margin: 0 }}>
+        <h2
+          style={{
+            fontSize: '16px',
+            margin: 0,
+          }}
+        >
           🛍️ আমাদের পণ্য
         </h2>
 
@@ -204,6 +250,7 @@ export default function Home() {
         </span>
       </div>
 
+      {/* LOADING */}
       {loading ? (
         <div
           style={{
@@ -235,104 +282,147 @@ export default function Home() {
           }}
         >
           {products.map((product) => (
-            <a
+            <div
               key={product.id}
-              href={`/product/${product.id}`}
               style={{
                 background: '#fff',
                 borderRadius: '10px',
                 padding: '8px',
-                textDecoration: 'none',
                 color: '#212121',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+                boxShadow:
+                  '0 1px 4px rgba(0,0,0,0.05)',
               }}
             >
-              <div
+              {/* PRODUCT IMAGE / LINK */}
+              <a
+                href={`/product/${product.id}`}
                 style={{
-                  height: '130px',
-                  background: '#f9f9f9',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                  fontSize: '55px',
+                  textDecoration: 'none',
+                  color: '#212121',
                 }}
               >
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                ) : (
-                  categoryEmoji[product.category] || '📦'
-                )}
-              </div>
-
-              {product.tag && (
-                <span
-                  style={{
-                    display: 'inline-block',
-                    marginTop: '6px',
-                    background: '#fff0e6',
-                    color: '#ff4600',
-                    fontSize: '9px',
-                    fontWeight: '700',
-                    padding: '2px 5px',
-                    borderRadius: '3px',
-                  }}
-                >
-                  {product.tag}
-                </span>
-              )}
-
-              <h3
-                style={{
-                  fontSize: '13px',
-                  margin: '6px 0',
-                  fontWeight: '600',
-                }}
-              >
-                {product.title}
-              </h3>
-
-              <div
-                style={{
-                  color: '#ff4600',
-                  fontSize: '16px',
-                  fontWeight: '800',
-                }}
-              >
-                ৳{formatPrice(product.price)}
-              </div>
-
-              {product.old_price && (
                 <div
                   style={{
-                    color: '#999',
-                    fontSize: '10px',
-                    textDecoration: 'line-through',
+                    height: '130px',
+                    background: '#f9f9f9',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    fontSize: '55px',
                   }}
                 >
-                  ৳{formatPrice(product.old_price)}
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  ) : (
+                    categoryEmoji[
+                      product.category
+                    ] || '📦'
+                  )}
                 </div>
-              )}
 
-              <div
+                {product.tag && (
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      marginTop: '6px',
+                      background: '#fff0e6',
+                      color: '#ff4600',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                      padding: '2px 5px',
+                      borderRadius: '3px',
+                    }}
+                  >
+                    {product.tag}
+                  </span>
+                )}
+
+                <h3
+                  style={{
+                    fontSize: '13px',
+                    margin: '6px 0',
+                    fontWeight: '600',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  {product.title}
+                </h3>
+
+                <div
+                  style={{
+                    color: '#ff4600',
+                    fontSize: '16px',
+                    fontWeight: '800',
+                  }}
+                >
+                  ৳{formatPrice(product.price)}
+                </div>
+
+                {product.old_price &&
+                  product.old_price > product.price && (
+                    <div
+                      style={{
+                        color: '#999',
+                        fontSize: '10px',
+                        textDecoration: 'line-through',
+                      }}
+                    >
+                      ৳{formatPrice(product.old_price)}
+                    </div>
+                  )}
+
+                <div
+                  style={{
+                    color:
+                      product.stock > 0
+                        ? '#777'
+                        : '#d32f2f',
+                    fontSize: '10px',
+                    marginTop: '4px',
+                  }}
+                >
+                  স্টক: {product.stock}
+                </div>
+              </a>
+
+              {/* ADD TO CART */}
+              <button
+                onClick={() => handleAddToCart(product)}
+                disabled={product.stock <= 0}
                 style={{
-                  color: '#777',
-                  fontSize: '10px',
-                  marginTop: '4px',
+                  width: '100%',
+                  marginTop: '9px',
+                  padding: '10px 5px',
+                  border: 'none',
+                  borderRadius: '7px',
+                  backgroundColor:
+                    product.stock > 0
+                      ? '#ff4600'
+                      : '#999999',
+                  color: '#ffffff',
+                  fontSize: '12px',
+                  fontWeight: '800',
+                  cursor:
+                    product.stock > 0
+                      ? 'pointer'
+                      : 'not-allowed',
                 }}
               >
-                স্টক: {product.stock}
-              </div>
-            </a>
+                {product.stock > 0
+                  ? '🛒 Add to Cart'
+                  : 'Out of Stock'}
+              </button>
+            </div>
           ))}
         </div>
       )}
