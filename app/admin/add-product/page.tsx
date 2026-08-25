@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 
 export default function AddProduct() {
@@ -18,19 +18,45 @@ export default function AddProduct() {
   const [imagePreview, setImagePreview] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // =========================
+  // ADMIN LOGIN CHECK
+  // =========================
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+
+      if (!data.session) {
+        window.location.href = '/login';
+        return;
+      }
+
+      setCheckingAuth(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  // =========================
+  // IMAGE SELECT
+  // =========================
+  const handleImageChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      setMessage('❌ শুধু ছবি নির্বাচন করুন।');
+    // 5 MB limit
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage('❌ ছবির সাইজ ৫ MB-এর বেশি হতে পারবে না।');
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage('❌ ছবির সাইজ সর্বোচ্চ 5 MB হতে পারবে।');
+    // Image only
+    if (!file.type.startsWith('image/')) {
+      setMessage('❌ শুধু Image ফাইল নির্বাচন করুন।');
       return;
     }
 
@@ -39,70 +65,106 @@ export default function AddProduct() {
     setMessage('');
   };
 
+  // =========================
+  // SUBMIT PRODUCT
+  // =========================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!productData.title || !productData.price || !productData.stock) {
+    if (
+      !productData.title ||
+      !productData.price ||
+      !productData.stock
+    ) {
       setMessage('দয়া করে প্রয়োজনীয় তথ্য পূরণ করুন।');
+      return;
+    }
+
+    if (!imageFile) {
+      setMessage('❌ দয়া করে পণ্যের একটি ছবি নির্বাচন করুন।');
       return;
     }
 
     setSaving(true);
     setMessage('');
 
-    let imageUrl: string | null = null;
-
     try {
-      // ছবি থাকলে Supabase Storage-এ আপলোড
-      if (imageFile) {
-        const fileExt = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+      // =========================
+      // 1. UPLOAD IMAGE
+      // =========================
+      const fileExt = imageFile.name.split('.').pop();
 
-        const fileName = `${Date.now()}-${crypto.randomUUID()}.${fileExt}`;
+      const safeFileName =
+        `${Date.now()}-${Math.random()
+          .toString(36)
+          .substring(2, 8)}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from('product-images')
-          .upload(fileName, imageFile, {
-            cacheControl: '3600',
-            upsert: false,
-            contentType: imageFile.type,
-          });
+      const filePath = `products/${safeFileName}`;
 
-        if (uploadError) {
-          console.error('Image upload error:', uploadError);
-          setMessage('❌ ছবি আপলোড করা যায়নি।');
-          setSaving(false);
-          return;
-        }
+      const { error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, imageFile, {
+          cacheControl: '3600',
+          upsert: false,
+        });
 
-        const { data: publicUrlData } = supabase.storage
-          .from('product-images')
-          .getPublicUrl(fileName);
-
-        imageUrl = publicUrlData.publicUrl;
-      }
-
-      // Product database-এ সংরক্ষণ
-      const { error } = await supabase.from('products').insert({
-        title: productData.title,
-        price: Number(productData.price),
-        old_price: productData.oldPrice
-          ? Number(productData.oldPrice)
-          : null,
-        category: productData.category,
-        stock: Number(productData.stock),
-        tag: productData.tag,
-        description: productData.description,
-        image_url: imageUrl,
-      });
-
-      if (error) {
-        console.error('Product insert error:', error);
-        setMessage('❌ পণ্য সংরক্ষণ করা যায়নি।');
+      if (uploadError) {
+        console.error(uploadError);
+        setMessage(
+          `❌ ছবি Upload করা যায়নি: ${uploadError.message}`
+        );
         setSaving(false);
         return;
       }
 
-      setMessage('✅ পণ্য ও ছবি সফলভাবে প্রকাশ হয়েছে!');
+      // =========================
+      // 2. GET PUBLIC IMAGE URL
+      // =========================
+      const { data: publicUrlData } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+
+      const imageUrl = publicUrlData.publicUrl;
+
+      // =========================
+      // 3. SAVE PRODUCT
+      // =========================
+      const { error: productError } = await supabase
+        .from('products')
+        .insert({
+          title: productData.title,
+          price: Number(productData.price),
+          old_price: productData.oldPrice
+            ? Number(productData.oldPrice)
+            : null,
+          category: productData.category,
+          stock: Number(productData.stock),
+          tag: productData.tag,
+          description: productData.description,
+          image_url: imageUrl,
+        });
+
+      if (productError) {
+        console.error(productError);
+
+        // Product save না হলে uploaded image মুছে দেওয়ার চেষ্টা
+        await supabase.storage
+          .from('product-images')
+          .remove([filePath]);
+
+        setMessage(
+          `❌ পণ্য সংরক্ষণ করা যায়নি: ${productError.message}`
+        );
+        setSaving(false);
+        return;
+      }
+
+      // =========================
+      // 4. SUCCESS
+      // =========================
+      setMessage(
+        '✅ পণ্য ও ছবি সফলভাবে Supabase-এ সংরক্ষণ হয়েছে!'
+      );
 
       setProductData({
         title: '',
@@ -116,14 +178,53 @@ export default function AddProduct() {
 
       setImageFile(null);
       setImagePreview('');
+
+      // File input reset
+      const fileInput = document.getElementById(
+        'product-image'
+      ) as HTMLInputElement | null;
+
+      if (fileInput) {
+        fileInput.value = '';
+      }
     } catch (error) {
       console.error(error);
-      setMessage('❌ একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+      setMessage('❌ একটি অপ্রত্যাশিত সমস্যা হয়েছে।');
     }
 
     setSaving(false);
   };
 
+  // =========================
+  // AUTH CHECK SCREEN
+  // =========================
+  if (checkingAuth) {
+    return (
+      <main
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f4f4f4',
+        }}
+      >
+        <p
+          style={{
+            fontSize: '14px',
+            fontWeight: '700',
+            color: '#555',
+          }}
+        >
+          🔐 Checking login...
+        </p>
+      </main>
+    );
+  }
+
+  // =========================
+  // PAGE
+  // =========================
   return (
     <main
       style={{
@@ -132,6 +233,7 @@ export default function AddProduct() {
         padding: '12px',
       }}
     >
+      {/* HEADER */}
       <div
         style={{
           backgroundColor: '#fff',
@@ -161,6 +263,7 @@ export default function AddProduct() {
         </p>
       </div>
 
+      {/* FORM */}
       <form
         onSubmit={handleSubmit}
         style={{
@@ -172,44 +275,8 @@ export default function AddProduct() {
           gap: '12px',
         }}
       >
-        <label style={{ fontSize: '13px', fontWeight: '700' }}>
-          পণ্যের ছবি
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{
-              display: 'block',
-              width: '100%',
-              marginTop: '7px',
-              fontSize: '13px',
-            }}
-          />
-        </label>
-
-        {imagePreview && (
-          <div
-            style={{
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              padding: '8px',
-              backgroundColor: '#fafafa',
-            }}
-          >
-            <img
-              src={imagePreview}
-              alt="Product preview"
-              style={{
-                width: '100%',
-                maxHeight: '220px',
-                objectFit: 'contain',
-                borderRadius: '6px',
-              }}
-            />
-          </div>
-        )}
-
-        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+        {/* PRODUCT NAME */}
+        <label style={labelStyle}>
           পণ্যের নাম *
           <input
             type="text"
@@ -226,10 +293,12 @@ export default function AddProduct() {
           />
         </label>
 
-        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+        {/* PRICE */}
+        <label style={labelStyle}>
           বিক্রয় মূল্য *
           <input
             type="number"
+            min="0"
             value={productData.price}
             onChange={(e) =>
               setProductData({
@@ -243,10 +312,12 @@ export default function AddProduct() {
           />
         </label>
 
-        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+        {/* OLD PRICE */}
+        <label style={labelStyle}>
           পুরাতন মূল্য
           <input
             type="number"
+            min="0"
             value={productData.oldPrice}
             onChange={(e) =>
               setProductData({
@@ -259,7 +330,8 @@ export default function AddProduct() {
           />
         </label>
 
-        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+        {/* CATEGORY */}
+        <label style={labelStyle}>
           ক্যাটাগরি
           <select
             value={productData.category}
@@ -278,7 +350,8 @@ export default function AddProduct() {
           </select>
         </label>
 
-        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+        {/* STOCK */}
+        <label style={labelStyle}>
           স্টক সংখ্যা *
           <input
             type="number"
@@ -296,7 +369,8 @@ export default function AddProduct() {
           />
         </label>
 
-        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+        {/* TAG */}
+        <label style={labelStyle}>
           পণ্যের ট্যাগ
           <select
             value={productData.tag}
@@ -315,8 +389,62 @@ export default function AddProduct() {
           </select>
         </label>
 
-        <label style={{ fontSize: '13px', fontWeight: '700' }}>
+        {/* IMAGE */}
+        <label style={labelStyle}>
+          পণ্যের ছবি *
+
+          <input
+            id="product-image"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            required
+            style={{
+              ...inputStyle,
+              padding: '9px',
+            }}
+          />
+        </label>
+
+        {/* IMAGE PREVIEW */}
+        {imagePreview && (
+          <div
+            style={{
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              padding: '8px',
+              backgroundColor: '#fafafa',
+            }}
+          >
+            <p
+              style={{
+                margin: '0 0 7px',
+                fontSize: '12px',
+                fontWeight: '700',
+                color: '#555',
+              }}
+            >
+              ছবির Preview
+            </p>
+
+            <img
+              src={imagePreview}
+              alt="Product preview"
+              style={{
+                display: 'block',
+                width: '100%',
+                maxHeight: '250px',
+                objectFit: 'contain',
+                borderRadius: '6px',
+              }}
+            />
+          </div>
+        )}
+
+        {/* DESCRIPTION */}
+        <label style={labelStyle}>
           পণ্যের বিবরণ
+
           <textarea
             value={productData.description}
             onChange={(e) =>
@@ -334,6 +462,7 @@ export default function AddProduct() {
           />
         </label>
 
+        {/* MESSAGE */}
         {message && (
           <div
             style={{
@@ -353,6 +482,7 @@ export default function AddProduct() {
           </div>
         )}
 
+        {/* SUBMIT */}
         <button
           type="submit"
           disabled={saving}
@@ -364,14 +494,41 @@ export default function AddProduct() {
             padding: '13px',
             fontSize: '14px',
             fontWeight: '800',
+            cursor: saving ? 'not-allowed' : 'pointer',
           }}
         >
-          {saving ? 'Saving...' : '🚀 Submit & Publish Product'}
+          {saving
+            ? 'Uploading & Saving...'
+            : '🚀 Submit & Publish Product'}
         </button>
+
+        {/* BACK */}
+        <a
+          href="/admin"
+          style={{
+            textAlign: 'center',
+            textDecoration: 'none',
+            color: '#555',
+            fontSize: '13px',
+            fontWeight: '700',
+            padding: '8px',
+          }}
+        >
+          ← Back to Admin Dashboard
+        </a>
       </form>
     </main>
   );
 }
+
+// =========================
+// STYLES
+// =========================
+
+const labelStyle: React.CSSProperties = {
+  fontSize: '13px',
+  fontWeight: '700',
+};
 
 const inputStyle: React.CSSProperties = {
   display: 'block',
