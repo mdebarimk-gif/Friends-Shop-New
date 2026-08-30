@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import SearchBar from "../components/SearchBar";
 import { CartProvider } from "../components/CartContext";
+import Footer from "../components/footer";
 
 export const metadata: Metadata = {
   title: "Friends Shop | Premium E-commerce Store",
@@ -45,7 +46,9 @@ export default function RootLayout({
             {children}
           </main>
 
-          {/* Bottom Navigation */}
+          <Footer />
+
+      {/* Bottom Navigation */}
           <nav
             style={{
               position: "fixed",
