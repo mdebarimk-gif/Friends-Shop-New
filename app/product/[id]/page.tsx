@@ -509,7 +509,7 @@ export default function ProductDetails() {
       <div
         style={{
           position: 'fixed',
-          bottom: 0,
+          bottom: '60px',
           left: 0,
           zIndex: 100,
           minHeight: '60px',
