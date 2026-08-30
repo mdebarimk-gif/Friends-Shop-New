@@ -523,17 +523,32 @@ export default function ProductDetails() {
           boxShadow: '0 -4px 12px rgba(0,0,0,0.08)',
         }}
       >
-        {/* Chat */}
+        {/* CHAT / WHATSAPP */}
         <button
+          onClick={() => {
+            window.open(
+              'https://wa.me/8801994245811?text=' +
+                encodeURIComponent(
+                  `আসসালামু আলাইকুম। আমি "${product.title}" পণ্যটি সম্পর্কে জানতে চাই।`
+                ),
+              '_blank'
+            );
+          }}
           style={{
-            backgroundColor: '#fff0e6',
-            border: 'none',
+            backgroundColor: '#e8f5e9',
+            color: '#128c7e',
+            border: '1px solid #c8e6c9',
             borderRadius: '8px',
-            width: '44px',
+            minWidth: '52px',
             height: '44px',
+            padding: '0 8px',
             cursor: 'pointer',
             fontSize: '18px',
+            fontWeight: 'bold',
+            flexShrink: 0,
           }}
+          aria-label="Chat with Friends Shop"
+          title="WhatsApp-এ Chat করুন"
         >
           💬
         </button>
