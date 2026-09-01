@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useCart } from '../../components/CartContext';
+import { supabase } from '../../lib/supabase';
 
 export default function Checkout() {
   const { cart, clearCart } = useCart();
@@ -24,7 +25,7 @@ export default function Checkout() {
   const deliveryFee = cart.length > 0 ? 60 : 0;
   const total = subtotal + deliveryFee;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.name || !formData.phone || !formData.address) {
@@ -37,8 +38,34 @@ export default function Checkout() {
       return;
     }
 
-    setIsOrdered(true);
-    clearCart();
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .insert({
+          customer_name: formData.name,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          items: cart,
+          subtotal: subtotal,
+          delivery_fee: deliveryFee,
+          total: total,
+          payment_method: paymentMethod,
+          status: 'pending',
+        });
+
+      if (error) {
+        console.error('Order error:', error);
+        alert('অর্ডার সংরক্ষণ করা যায়নি: ' + error.message);
+        return;
+      }
+
+      setIsOrdered(true);
+      clearCart();
+    } catch (error) {
+      console.error(error);
+      alert('অর্ডার করার সময় সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+    }
   };
 
   if (cart.length === 0 && !isOrdered) {
