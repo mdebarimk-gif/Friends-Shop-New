@@ -506,6 +506,7 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+        <a href="/admin/orders" style={{display:"block",padding:"14px",marginTop:"16px",borderRadius:"10px",background:"#f97316",color:"white",textAlign:"center",fontWeight:"bold",textDecoration:"none"}}>📦 Order Management</a>
     </main>
   );
 }
