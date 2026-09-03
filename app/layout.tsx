@@ -105,7 +105,7 @@ export default function RootLayout({
             </a>
 
             <a
-              href="/admin"
+              href="/account"
               style={{
                 textDecoration: "none",
                 color: "#555",
