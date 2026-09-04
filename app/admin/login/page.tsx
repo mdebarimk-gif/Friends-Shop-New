@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../../lib/supabase';
 
 export default function Login() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function Login() {
       const { data } = await supabase.auth.getSession();
 
       if (data.session) {
-        router.replace('/account');
+        router.replace('/admin');
       }
     };
 
@@ -50,7 +50,7 @@ export default function Login() {
 
     setMessage('✅ Login সফল হয়েছে।');
 
-    router.replace('/account');
+    router.replace('/admin');
   };
 
   return (
@@ -95,7 +95,7 @@ export default function Login() {
               marginTop: '6px',
             }}
           >
-            Customer Login
+            Admin Login
           </p>
         </div>
 
@@ -187,9 +187,6 @@ export default function Login() {
             {loading ? 'Logging in...' : '🔐 Login'}
           </button>
         </form>
-        <p style={{ textAlign: "center", marginTop: "16px" }}>
-          নতুন Customer? <a href="/signup" style={{ color: "#ff4600", fontWeight: "bold" }}>Create Account</a>
-        </p>
       </div>
     </main>
   );
