@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { supabase } from "../lib/supabase";
 
 export default function AdminGuard({
@@ -8,17 +9,24 @@ export default function AdminGuard({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const [allowed, setAllowed] = useState(false);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
+    if (pathname === "/admin/login") {
+      setAllowed(true);
+      setChecking(false);
+      return;
+    }
+
     const checkAdmin = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (!user) {
-        window.location.href = "/login";
+        window.location.href = "/admin/login";
         return;
       }
 
@@ -38,7 +46,7 @@ export default function AdminGuard({
     };
 
     checkAdmin();
-  }, []);
+  }, [pathname]);
 
   if (checking) {
     return (
@@ -52,4 +60,3 @@ export default function AdminGuard({
 
   return <>{children}</>;
 }
-
