@@ -152,64 +152,91 @@ export default function Home() {
       </div>
 
       {/* CATEGORY */}
-      <h2
-        style={{
-          fontSize: '16px',
-          margin: '0 0 10px',
-        }}
-      >
-        ক্যাটাগরি সমূহ
-      </h2>
-
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginBottom: '20px',
-        }}
-      >
-        {[
-          ['fashion', 'Fashion'],
-          ['gadgets', 'Gadgets'],
-          ['mart', 'Mart'],
-          ['beauty', 'Beauty'],
-        ].map(([key, name]) => (
-          <a
-            key={key}
-            href={`/category/${key}`}
+      <div style={{ marginBottom: '20px' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '10px',
+          }}
+        >
+          <h2
             style={{
-              textDecoration: 'none',
-              color: '#424242',
-              textAlign: 'center',
-              width: '24%',
+              fontSize: '16px',
+              margin: 0,
+              fontWeight: '800',
             }}
           >
-            <div
-              style={{
-                width: '45px',
-                height: '45px',
-                margin: '0 auto 5px',
-                borderRadius: '50%',
-                background: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '22px',
-              }}
-            >
-              {categoryEmoji[key]}
-            </div>
+            ✨ Featured Categories
+          </h2>
 
-            <span
+          <span
+            style={{
+              fontSize: '11px',
+              color: '#777',
+            }}
+          >
+            সব ক্যাটাগরি
+          </span>
+        </div>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(5, 1fr)',
+            gap: '7px',
+          }}
+        >
+          {[
+            ['fashion', '👕', 'Fashion', '#e3f2fd'],
+            ['gadgets', '🎧', 'Gadgets', '#f3e5f5'],
+            ['mart', '🛒', 'Mart', '#e8f5e9'],
+            ['beauty', '💄', 'Beauty', '#fce4ec'],
+            ['natural-food', '🥜', 'Natural Food', '#fff8e1'],
+          ].map(([key, emoji, name, bgColor]) => (
+            <a
+              key={key}
+              href={`/category/${key}`}
               style={{
-                fontSize: '11px',
-                fontWeight: '600',
+                textDecoration: 'none',
+                color: '#333',
+                textAlign: 'center',
+                background: bgColor,
+                borderRadius: '12px',
+                padding: '10px 3px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                border: '1px solid #bdbdbd',
               }}
             >
-              {name}
-            </span>
-          </a>
-        ))}
+              <div
+                style={{
+                  width: '42px',
+                  height: '42px',
+                  margin: '0 auto 6px',
+                  borderRadius: '50%',
+                  background: '#fff4e8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '22px',
+                }}
+              >
+                {emoji}
+              </div>
+
+              <div
+                style={{
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  lineHeight: '1.2',
+                }}
+              >
+                {name}
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
 
       {/* PRODUCTS HEADER */}
