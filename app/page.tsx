@@ -120,7 +120,7 @@ export default function Home() {
           <div
             style={{
               fontWeight: '700',
-              fontSize: '13px',
+              fontSize: '15px',
             }}
           >
             Claim Vouchers to Save More!
@@ -254,7 +254,7 @@ export default function Home() {
             margin: 0,
           }}
         >
-          🛍️ আমাদের পণ্য
+          🛍️ Featured Products
         </h2>
 
         <span
@@ -323,7 +323,7 @@ export default function Home() {
                   style={{
                     height: '130px',
                     background: '#f9f9f9',
-                    borderRadius: '8px',
+                    borderRadius: '12px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
