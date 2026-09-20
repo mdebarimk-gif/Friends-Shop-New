@@ -82,35 +82,26 @@ export default function Home() {
       {/* HERO */}
       <div
         style={{
-          background:
-            'linear-gradient(135deg, #f50 0%, #ff85c0 100%)',
-          borderRadius: '12px',
-          padding: '20px',
-          color: '#fff',
+          position: 'relative',
+          height: '210px',
+          borderRadius: '14px',
+          overflow: 'hidden',
           marginBottom: '12px',
+          backgroundImage: "url('/hero-banner.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
       >
-        <h1
+        <a
+          href="#products"
           style={{
-            fontSize: '20px',
-            fontWeight: '800',
-            margin: 0,
-            lineHeight: '1.3',
+            position: 'absolute',
+            inset: 0,
+            zIndex: 2,
+            display: 'block',
           }}
-        >
-          সবচেয়ে কম দামে
-          <br />
-          সেরা কেনাকাটা!
-        </h1>
-
-        <p
-          style={{
-            fontSize: '12px',
-            margin: '6px 0 0',
-          }}
-        >
-          Friends Shop-এ পাচ্ছেন ফ্রি শিপিং ও অফার।
-        </p>
+          aria-label="এখনই শপ করুন"
+        />
       </div>
 
       {/* VOUCHER */}
@@ -222,7 +213,7 @@ export default function Home() {
       </div>
 
       {/* PRODUCTS HEADER */}
-      <div
+      <div id="products"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
