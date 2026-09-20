@@ -120,7 +120,7 @@ export default function Home() {
           <div
             style={{
               fontWeight: '700',
-              fontSize: '15px',
+              fontSize: '13px',
             }}
           >
             Claim Vouchers to Save More!
@@ -152,76 +152,46 @@ export default function Home() {
       </div>
 
       {/* SPECIAL OFFER */}
-      <div
+      <a
+        href="#products"
         style={{
-          marginBottom: '20px',
-          padding: '16px',
-          borderRadius: '14px',
-          background: 'linear-gradient(135deg, #ff6b35, #ff1744)',
-          color: '#fff',
-          textAlign: 'center',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+          display: 'block',
+          overflow: 'hidden',
+          marginBottom: '12px',
+          borderRadius: '999px',
+          background: '#fff3e0',
+          border: '1px solid #ff7043',
+          height: '34px',
+          textDecoration: 'none',
+          color: '#e53935',
+          whiteSpace: 'nowrap',
         }}
+        aria-label="এখনই কিনুন"
       >
-        <div style={{ fontSize: '22px', fontWeight: '900', marginBottom: '5px' }}>
-          🔥 Special Offer
-        </div>
-
-        <div style={{ fontSize: '14px', fontWeight: '700', marginBottom: '4px' }}>
-          নির্বাচিত পণ্যে চলছে বিশেষ ছাড়!
-        </div>
-
-        <div style={{ fontSize: '12px', marginBottom: '8px' }}>
-          আজই অর্ডার করুন — অফার সীমিত সময়ের জন্য।
-        </div>
-
         <div
           style={{
             display: 'inline-block',
-            background: '#fff',
-            color: '#e53935',
-            padding: '5px 12px',
-            borderRadius: '16px',
-            fontSize: '13px',
-            fontWeight: '900',
-            marginBottom: '12px',
-          }}
-        >
-          🎉 UP TO 20% OFF
-        </div>
-
-        <div style={{ marginBottom: '12px', fontSize: '14px' }}>
-          <span
-            style={{
-              textDecoration: 'line-through',
-              opacity: 0.8,
-              marginRight: '8px',
-            }}
-          >
-            ৳1,000
-          </span>
-
-          <strong style={{ fontSize: '20px' }}>
-            ৳800
-          </strong>
-        </div>
-
-        <a
-          href="#products"
-          style={{
-            display: 'inline-block',
-            background: '#fff',
-            color: '#e53935',
-            padding: '8px 18px',
-            borderRadius: '20px',
-            textDecoration: 'none',
+            paddingLeft: '100%',
+            animation: 'offerMove 12s linear infinite',
             fontSize: '12px',
             fontWeight: '800',
+            lineHeight: '34px',
           }}
         >
-          🛒 এখনই কিনুন
-        </a>
-      </div>
+          🔥 Special Offer &nbsp; • &nbsp; UP TO 20% OFF &nbsp; • &nbsp; ৳1,000 → ৳800 &nbsp; • &nbsp; 🛒 এখনই কিনুন
+        </div>
+      </a>
+
+      <style jsx>{`
+        @keyframes offerMove {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
+      `}</style>
 
       {/* CATEGORY */}
       <div style={{ marginBottom: '20px' }}>
