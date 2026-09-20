@@ -151,6 +151,78 @@ export default function Home() {
         </button>
       </div>
 
+      {/* SPECIAL OFFER */}
+      <div
+        style={{
+          marginBottom: '20px',
+          padding: '16px',
+          borderRadius: '14px',
+          background: 'linear-gradient(135deg, #ff6b35, #ff1744)',
+          color: '#fff',
+          textAlign: 'center',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+        }}
+      >
+        <div style={{ fontSize: '22px', fontWeight: '900', marginBottom: '5px' }}>
+          🔥 Special Offer
+        </div>
+
+        <div style={{ fontSize: '14px', fontWeight: '700', marginBottom: '4px' }}>
+          নির্বাচিত পণ্যে চলছে বিশেষ ছাড়!
+        </div>
+
+        <div style={{ fontSize: '12px', marginBottom: '8px' }}>
+          আজই অর্ডার করুন — অফার সীমিত সময়ের জন্য।
+        </div>
+
+        <div
+          style={{
+            display: 'inline-block',
+            background: '#fff',
+            color: '#e53935',
+            padding: '5px 12px',
+            borderRadius: '16px',
+            fontSize: '13px',
+            fontWeight: '900',
+            marginBottom: '12px',
+          }}
+        >
+          🎉 UP TO 20% OFF
+        </div>
+
+        <div style={{ marginBottom: '12px', fontSize: '14px' }}>
+          <span
+            style={{
+              textDecoration: 'line-through',
+              opacity: 0.8,
+              marginRight: '8px',
+            }}
+          >
+            ৳1,000
+          </span>
+
+          <strong style={{ fontSize: '20px' }}>
+            ৳800
+          </strong>
+        </div>
+
+        <a
+          href="#products"
+          style={{
+            display: 'inline-block',
+            background: '#fff',
+            color: '#e53935',
+            padding: '8px 18px',
+            borderRadius: '20px',
+            textDecoration: 'none',
+            fontSize: '12px',
+            fontWeight: '800',
+          }}
+        >
+          🛒 এখনই কিনুন
+        </a>
+      </div>
+
       {/* CATEGORY */}
       <div style={{ marginBottom: '20px' }}>
         <div
