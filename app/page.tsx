@@ -482,6 +482,29 @@ export default function Home() {
                   ? '🛒 Add to Cart'
                   : 'Out of Stock'}
               </button>
+
+              {product.stock > 0 && (
+                <button
+                  onClick={() => {
+                    handleAddToCart(product)
+                    window.location.href = '/cart'
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: '8px',
+                    padding: '10px 5px',
+                    border: 'none',
+                    borderRadius: '7px',
+                    backgroundColor: '#ff6d00',
+                    color: '#ffffff',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ⚡ Buy Now
+                </button>
+              )}
             </div>
           ))}
         </div>
