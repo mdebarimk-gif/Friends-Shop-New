@@ -14,8 +14,9 @@ export default function AddProduct() {
     description: '',
   });
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState('');
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -38,22 +39,31 @@ export default function AddProduct() {
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = e.target.files?.[0];
+    const files = Array.from(e.target.files || []);
 
-    if (!file) return;
+    if (files.length === 0) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage('❌ ছবির সাইজ ৫ MB-এর বেশি হতে পারবে না।');
-      return;
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        setMessage('❌ শুধু Image ফাইল নির্বাচন করুন।');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage(
+          `❌ "${file.name}" ছবির সাইজ ৫ MB-এর বেশি।`
+        );
+        return;
+      }
     }
 
-    if (!file.type.startsWith('image/')) {
-      setMessage('❌ শুধু Image ফাইল নির্বাচন করুন।');
-      return;
-    }
+    setImageFiles(files);
 
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    const previews = files.map((file) =>
+      URL.createObjectURL(file)
+    );
+
+    setImagePreviews(previews);
     setMessage('');
   };
 
@@ -69,49 +79,71 @@ export default function AddProduct() {
       return;
     }
 
-    if (!imageFile) {
-      setMessage('❌ দয়া করে পণ্যের একটি ছবি নির্বাচন করুন।');
+    if (imageFiles.length === 0) {
+      setMessage(
+        '❌ দয়া করে পণ্যের অন্তত একটি ছবি নির্বাচন করুন।'
+      );
       return;
     }
 
     setSaving(true);
     setMessage('');
 
+    const uploadedFilePaths: string[] = [];
+
     try {
-      const fileExt = imageFile.name.split('.').pop();
+      const imageUrls: string[] = [];
 
-      const safeFileName =
-        `${Date.now()}-${Math.random()
-          .toString(36)
-          .substring(2, 8)}.${fileExt}`;
+      // সব ছবি Upload
+      for (const imageFile of imageFiles) {
+        const fileExt =
+          imageFile.name.split('.').pop()?.toLowerCase() ||
+          'jpg';
 
-      const filePath = `products/${safeFileName}`;
+        const safeFileName =
+          `${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(2, 8)}.${fileExt}`;
 
-      // ছবি Upload
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(filePath, imageFile, {
-          cacheControl: '3600',
-          upsert: false,
-        });
+        const filePath = `products/${safeFileName}`;
 
-      if (uploadError) {
-        console.error(uploadError);
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, imageFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
 
-        setMessage(
-          `❌ ছবি Upload করা যায়নি: ${uploadError.message}`
-        );
+        if (uploadError) {
+          console.error(uploadError);
 
-        setSaving(false);
-        return;
+          // আগে Upload হওয়া ছবিগুলো মুছে ফেলবে
+          if (uploadedFilePaths.length > 0) {
+            await supabase.storage
+              .from('product-images')
+              .remove(uploadedFilePaths);
+          }
+
+          setMessage(
+            `❌ "${imageFile.name}" Upload করা যায়নি: ${uploadError.message}`
+          );
+
+          setSaving(false);
+          return;
+        }
+
+        uploadedFilePaths.push(filePath);
+
+        const { data: publicUrlData } =
+          supabase.storage
+            .from('product-images')
+            .getPublicUrl(filePath);
+
+        imageUrls.push(publicUrlData.publicUrl);
       }
 
-      // ছবির Public URL
-      const { data: publicUrlData } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(filePath);
-
-      const imageUrl = publicUrlData.publicUrl;
+      // প্রথম ছবিটি প্রধান ছবি
+      const mainImageUrl = imageUrls[0];
 
       // Product Supabase-এ Save
       const { error: productError } = await supabase
@@ -124,22 +156,28 @@ export default function AddProduct() {
             ? Number(productData.oldPrice)
             : null,
 
-          // নির্বাচিত ক্যাটাগরি
           category: productData.category,
 
           stock: Number(productData.stock),
           tag: productData.tag,
           description: productData.description,
-          image_url: imageUrl,
+
+          // প্রথম ছবি
+          image_url: mainImageUrl,
+
+          // সব ছবির URL
+          image_urls: imageUrls,
         });
 
       if (productError) {
         console.error(productError);
 
-        // Product Save না হলে Upload করা ছবি মুছে ফেলবে
-        await supabase.storage
-          .from('product-images')
-          .remove([filePath]);
+        // Product Save না হলে সব Upload করা ছবি মুছে ফেলবে
+        if (uploadedFilePaths.length > 0) {
+          await supabase.storage
+            .from('product-images')
+            .remove(uploadedFilePaths);
+        }
 
         setMessage(
           `❌ পণ্য সংরক্ষণ করা যায়নি: ${productError.message}`
@@ -149,9 +187,9 @@ export default function AddProduct() {
         return;
       }
 
-      // সফল হলে
+      // সফল
       setMessage(
-        '✅ পণ্য ও ছবি সফলভাবে Supabase-এ সংরক্ষণ হয়েছে!'
+        `✅ পণ্য সফলভাবে সংরক্ষণ হয়েছে! মোট ${imageUrls.length}টি ছবি যোগ হয়েছে।`
       );
 
       // Form Reset
@@ -165,8 +203,8 @@ export default function AddProduct() {
         description: '',
       });
 
-      setImageFile(null);
-      setImagePreview('');
+      setImageFiles([]);
+      setImagePreviews([]);
 
       const fileInput = document.getElementById(
         'product-image'
@@ -177,6 +215,14 @@ export default function AddProduct() {
       }
     } catch (error) {
       console.error(error);
+
+      // কোনো অপ্রত্যাশিত সমস্যা হলে Upload করা ছবি মুছে ফেলবে
+      if (uploadedFilePaths.length > 0) {
+        await supabase.storage
+          .from('product-images')
+          .remove(uploadedFilePaths);
+      }
+
       setMessage('❌ একটি অপ্রত্যাশিত সমস্যা হয়েছে।');
     }
 
@@ -392,7 +438,7 @@ export default function AddProduct() {
           </select>
         </label>
 
-        {/* Image */}
+        {/* Multiple Images */}
         <label style={labelStyle}>
           পণ্যের ছবি *
 
@@ -400,6 +446,7 @@ export default function AddProduct() {
             id="product-image"
             type="file"
             accept="image/*"
+            multiple
             onChange={handleImageChange}
             required
             style={{
@@ -407,40 +454,108 @@ export default function AddProduct() {
               padding: '9px',
             }}
           />
+
+          <span
+            style={{
+              display: 'block',
+              marginTop: '5px',
+              fontSize: '11px',
+              color: '#777',
+              fontWeight: '500',
+            }}
+          >
+            একসাথে একাধিক ছবি নির্বাচন করতে পারবেন। প্রতিটি ছবি
+            সর্বোচ্চ ৫ MB।
+          </span>
         </label>
 
         {/* Image Preview */}
-        {imagePreview && (
+        {imagePreviews.length > 0 && (
           <div
             style={{
               border: '1px solid #ddd',
               borderRadius: '8px',
-              padding: '8px',
+              padding: '10px',
               backgroundColor: '#fafafa',
             }}
           >
             <p
               style={{
-                margin: '0 0 7px',
+                margin: '0 0 10px',
                 fontSize: '12px',
                 fontWeight: '700',
                 color: '#555',
               }}
             >
-              ছবির Preview
+              🖼️ নির্বাচিত ছবি: {imagePreviews.length}টি
             </p>
 
-            <img
-              src={imagePreview}
-              alt="Product preview"
+            <div
               style={{
-                display: 'block',
-                width: '100%',
-                maxHeight: '250px',
-                objectFit: 'contain',
-                borderRadius: '6px',
+                display: 'grid',
+                gridTemplateColumns:
+                  'repeat(3, 1fr)',
+                gap: '8px',
               }}
-            />
+            >
+              {imagePreviews.map((preview, index) => (
+                <div
+                  key={preview}
+                  style={{
+                    position: 'relative',
+                    borderRadius: '7px',
+                    overflow: 'hidden',
+                    backgroundColor: '#fff',
+                    border: '1px solid #ddd',
+                  }}
+                >
+                  <img
+                    src={preview}
+                    alt={`Product preview ${index + 1}`}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      height: '110px',
+                      objectFit: 'cover',
+                    }}
+                  />
+
+                  {index === 0 && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        left: '4px',
+                        bottom: '4px',
+                        backgroundColor: '#ff4600',
+                        color: '#fff',
+                        padding: '3px 6px',
+                        borderRadius: '4px',
+                        fontSize: '9px',
+                        fontWeight: '800',
+                      }}
+                    >
+                      প্রধান ছবি
+                    </span>
+                  )}
+
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '4px',
+                      right: '4px',
+                      backgroundColor: 'rgba(0,0,0,0.65)',
+                      color: '#fff',
+                      padding: '2px 5px',
+                      borderRadius: '4px',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
