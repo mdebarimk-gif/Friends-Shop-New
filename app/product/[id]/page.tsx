@@ -15,6 +15,7 @@ type Product = {
   tag: string | null;
   description: string | null;
   image_url: string | null;
+  image_urls: string[] | null;
 };
 
 export default function ProductDetails() {
@@ -29,6 +30,7 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [added, setAdded] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -59,6 +61,20 @@ export default function ProductDetails() {
       }
 
       setProduct(data);
+
+      // নতুন Product-এর সব ছবি
+      // পুরোনো Product-এর জন্য image_url ব্যবহার
+      const images =
+        data.image_urls &&
+        Array.isArray(data.image_urls) &&
+        data.image_urls.length > 0
+          ? data.image_urls
+          : data.image_url
+          ? [data.image_url]
+          : [];
+
+      setSelectedImage(images[0] || '');
+
       setLoading(false);
     };
 
@@ -148,8 +164,22 @@ export default function ProductDetails() {
       : 'Out of Stock';
 
   // =========================
+  // PRODUCT IMAGES
+  // =========================
+
+  const productImages =
+    product.image_urls &&
+    Array.isArray(product.image_urls) &&
+    product.image_urls.length > 0
+      ? product.image_urls
+      : product.image_url
+      ? [product.image_url]
+      : [];
+
+  // =========================
   // ADD TO CART
   // =========================
+
   const handleAddToCart = () => {
     if (product.stock <= 0) {
       alert('এই পণ্যটি বর্তমানে Stock-এ নেই।');
@@ -175,6 +205,7 @@ export default function ProductDetails() {
   // =========================
   // BUY NOW
   // =========================
+
   const handleBuyNow = () => {
     if (product.stock <= 0) {
       alert('এই পণ্যটি বর্তমানে Stock-এ নেই।');
@@ -207,38 +238,109 @@ export default function ProductDetails() {
       }}
     >
       {/* =========================
-          PRODUCT IMAGE
+          PRODUCT IMAGE GALLERY
       ========================= */}
+
       <div
         style={{
           backgroundColor: '#ffffff',
-          minHeight: '280px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '15px',
+          padding: '12px',
           boxSizing: 'border-box',
         }}
       >
-        {product.image_url ? (
-          <img
-            src={product.image_url}
-            alt={product.title}
-            style={{
-              width: '100%',
-              maxWidth: '420px',
-              height: '280px',
-              objectFit: 'contain',
-              borderRadius: '8px',
-            }}
-          />
-        ) : (
+        {/* Main Image */}
+        <div
+          style={{
+            minHeight: '280px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#fafafa',
+            borderRadius: '8px',
+            overflow: 'hidden',
+          }}
+        >
+          {selectedImage ? (
+            <img
+              src={selectedImage}
+              alt={product.title}
+              style={{
+                width: '100%',
+                maxWidth: '420px',
+                height: '280px',
+                objectFit: 'contain',
+                borderRadius: '8px',
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                fontSize: '80px',
+              }}
+            >
+              🛍️
+            </div>
+          )}
+        </div>
+
+        {/* Image Counter */}
+        {productImages.length > 1 && (
           <div
             style={{
-              fontSize: '80px',
+              textAlign: 'center',
+              marginTop: '8px',
+              fontSize: '11px',
+              color: '#777',
+              fontWeight: '600',
             }}
           >
-            🛍️
+            🖼️ {productImages.length}টি ছবি
+          </div>
+        )}
+
+        {/* Thumbnails */}
+        {productImages.length > 1 && (
+          <div
+            style={{
+              display: 'flex',
+              gap: '8px',
+              overflowX: 'auto',
+              paddingTop: '10px',
+              paddingBottom: '3px',
+            }}
+          >
+            {productImages.map((image, index) => (
+              <button
+                key={`${image}-${index}`}
+                type="button"
+                onClick={() => setSelectedImage(image)}
+                style={{
+                  flexShrink: 0,
+                  width: '68px',
+                  height: '68px',
+                  padding: '2px',
+                  border:
+                    selectedImage === image
+                      ? '2px solid #ff4600'
+                      : '1px solid #ddd',
+                  borderRadius: '7px',
+                  backgroundColor: '#fff',
+                  cursor: 'pointer',
+                  overflow: 'hidden',
+                }}
+              >
+                <img
+                  src={image}
+                  alt={`${product.title} ${index + 1}`}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '5px',
+                  }}
+                />
+              </button>
+            ))}
           </div>
         )}
       </div>
@@ -246,6 +348,7 @@ export default function ProductDetails() {
       {/* =========================
           PRICE & TITLE
       ========================= */}
+
       <div
         style={{
           backgroundColor: '#ffffff',
@@ -370,6 +473,7 @@ export default function ProductDetails() {
       {/* =========================
           QUANTITY
       ========================= */}
+
       <div
         style={{
           backgroundColor: '#ffffff',
@@ -455,6 +559,7 @@ export default function ProductDetails() {
       {/* =========================
           DESCRIPTION
       ========================= */}
+
       <div
         style={{
           backgroundColor: '#ffffff',
@@ -506,6 +611,7 @@ export default function ProductDetails() {
       {/* =========================
           BOTTOM BUTTONS
       ========================= */}
+
       <div
         style={{
           position: 'fixed',
@@ -524,6 +630,7 @@ export default function ProductDetails() {
         }}
       >
         {/* CHAT / WHATSAPP */}
+
         <button
           onClick={() => {
             window.open(
@@ -554,6 +661,7 @@ export default function ProductDetails() {
         </button>
 
         {/* ADD TO CART */}
+
         <button
           onClick={handleAddToCart}
           disabled={product.stock <= 0}
@@ -584,6 +692,7 @@ export default function ProductDetails() {
         </button>
 
         {/* BUY NOW */}
+
         <button
           onClick={handleBuyNow}
           disabled={product.stock <= 0}
