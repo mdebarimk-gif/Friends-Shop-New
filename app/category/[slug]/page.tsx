@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../../lib/supabase';
+import { useCart } from '../../../components/CartContext';
 
 type Product = {
   id: number;
@@ -33,6 +34,8 @@ export default function CategoryPage({
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { addToCart } = useCart();
+
   useEffect(() => {
     const loadCategory = async () => {
       const { slug: categorySlug } = await params;
@@ -60,6 +63,28 @@ export default function CategoryPage({
 
   const categoryName =
     categoryNames[slug] || 'Products';
+
+  const handleAddToCart = (product: Product) => {
+    addToCart({
+      id: product.id,
+      name: product.title,
+      image: product.image_url || '',
+      price: product.price,
+    });
+
+    alert('✅ পণ্যটি কার্টে যোগ হয়েছে!');
+  };
+
+  const handleBuyNow = (product: Product) => {
+    addToCart({
+      id: product.id,
+      name: product.title,
+      image: product.image_url || '',
+      price: product.price,
+    });
+
+    window.location.href = '/checkout';
+  };
 
   if (loading) {
     return (
@@ -327,8 +352,13 @@ export default function CategoryPage({
                   স্টক: {product.stock}
                 </div>
 
+                {/* Add to Cart */}
                 <button
+                  type="button"
                   disabled={product.stock <= 0}
+                  onClick={() =>
+                    handleAddToCart(product)
+                  }
                   style={{
                     width: '100%',
                     marginTop: '9px',
@@ -352,6 +382,30 @@ export default function CategoryPage({
                     ? '🛒 Add to Cart'
                     : 'Out of Stock'}
                 </button>
+
+                {/* Buy Now */}
+                {product.stock > 0 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleBuyNow(product)
+                    }
+                    style={{
+                      width: '100%',
+                      marginTop: '6px',
+                      padding: '9px',
+                      border: '1px solid #ff4600',
+                      borderRadius: '6px',
+                      backgroundColor: '#fff',
+                      color: '#ff4600',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ⚡ Buy Now
+                  </button>
+                )}
               </div>
             </div>
           ))}
