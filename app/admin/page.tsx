@@ -122,7 +122,7 @@ export default function AdminDashboard() {
 
     if (error) {
       console.error(error);
-      setMessage('❌ পণ্য Delete করা যায়নি।');
+      setMessage(`❌ Delete হয়নি: ${error.message}`);
       return;
     }
 
