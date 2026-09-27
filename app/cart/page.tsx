@@ -315,19 +315,7 @@ export default function ShoppingCart() {
               <span>৳{subtotal}</span>
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                fontSize: '13px',
-                color: '#757575',
-                borderBottom: '1px solid #f5f5f5',
-                paddingBottom: '8px',
-              }}
-            >
-              <span>Delivery Fee</span>
-              <span>৳{deliveryFee}</span>
-            </div>
+
 
             <div
               style={{
@@ -339,9 +327,9 @@ export default function ShoppingCart() {
                 paddingTop: '4px',
               }}
             >
-              <span>Total Amount</span>
+              <span>Product Total</span>
               <span style={{ color: '#ff4600' }}>
-                ৳{total}
+                ৳{subtotal}
               </span>
             </div>
           </div>
