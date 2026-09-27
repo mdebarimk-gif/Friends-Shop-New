@@ -35,6 +35,14 @@ export default function Checkout() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      alert('অর্ডার কনফার্ম করতে আগে Customer Account-এ Login করুন।');
+      window.location.href = '/login';
+      return;
+    }
+
     if (!formData.name || !formData.phone || !formData.address) {
       alert('দয়া করে সব তথ্য সঠিকভাবে পূরণ করুন!');
       return;
