@@ -115,8 +115,65 @@ export default function AccountPage() {
                 }}
               >
                 <p><strong>Order ID:</strong> #{order.id}</p>
-                <p><strong>Total:</strong> ৳{order.total}</p>
+
+                <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+                  <strong>🛍️ Products</strong>
+
+                  {Array.isArray(order.items) && order.items.length > 0 ? (
+                    <div style={{ marginTop: "10px" }}>
+                      {order.items.map((item: any, index: number) => (
+                        <div
+                          key={item.id || index}
+                          style={{
+                            display: "flex",
+                            gap: "12px",
+                            alignItems: "center",
+                            padding: "10px 0",
+                            borderBottom:
+                              index < order.items.length - 1
+                                ? "1px solid #eee"
+                                : "none",
+                          }}
+                        >
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt={item.name || "Product"}
+                              style={{
+                                width: "60px",
+                                height: "60px",
+                                objectFit: "cover",
+                                borderRadius: "8px",
+                                border: "1px solid #ddd",
+                              }}
+                            />
+                          )}
+
+                          <div style={{ flex: 1 }}>
+                            <p style={{ margin: "0 0 5px", fontWeight: "bold" }}>
+                              {item.name || "Product"}
+                            </p>
+                            <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>
+                              ৳{item.price} × {item.quantity || 1}
+                            </p>
+                          </div>
+
+                          <strong>
+                            ৳{(item.price || 0) * (item.quantity || 1)}
+                          </strong>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ color: "#777", marginTop: "10px" }}>
+                      Product details পাওয়া যায়নি।
+                    </p>
+                  )}
+                </div>
+
+                <p><strong>Subtotal:</strong> ৳{order.subtotal}</p>
                 <p><strong>Delivery Fee:</strong> ৳{order.delivery_fee}</p>
+                <p><strong>Total:</strong> ৳{order.total}</p>
                 <p><strong>Payment:</strong> {order.payment_method}</p>
                 <p><strong>Status:</strong> {order.status}</p>
                 <p>
