@@ -5,13 +5,25 @@ import { useCart } from '../../components/CartContext';
 import { supabase } from '../../lib/supabase';
 
 export default function Checkout() {
+const divisionDistricts: Record<string, string[]> = {
+  Dhaka: ['Dhaka','Faridpur','Gazipur','Gopalganj','Kishoreganj','Madaripur','Manikganj','Munshiganj','Narayanganj','Narsingdi','Rajbari','Shariatpur','Tangail'],
+  Chattogram: ['Bandarban','Brahmanbaria','Chandpur','Chattogram','Cumilla',"Cox's Bazar",'Feni','Khagrachhari','Lakshmipur','Noakhali','Rangamati'],
+  Rajshahi: ['Bogura','Chapainawabganj','Joypurhat','Naogaon','Natore','Pabna','Rajshahi','Sirajganj'],
+  Khulna: ['Bagerhat','Chuadanga','Jashore','Jhenaidah','Khulna','Kushtia','Magura','Meherpur','Narail','Satkhira'],
+  Barishal: ['Barguna','Barishal','Bhola','Jhalokathi','Patuakhali','Pirojpur'],
+  Sylhet: ['Habiganj','Moulvibazar','Sunamganj','Sylhet'],
+  Rangpur: ['Dinajpur','Gaibandha','Kurigram','Lalmonirhat','Nilphamari','Panchagarh','Rangpur','Thakurgaon'],
+  Mymensingh: ['Jamalpur','Mymensingh','Netrokona','Sherpur'],
+};
   const { cart, clearCart } = useCart();
 
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     address: '',
-    city: 'Dhaka',
+    division: 'Dhaka',
+    district: 'Dhaka',
+    areaType: 'Dhaka City',
   });
 
   const [paymentMethod, setPaymentMethod] = useState('cod');
@@ -23,10 +35,12 @@ export default function Checkout() {
     0
   );
 
+  const isDhakaCity = formData.division === 'Dhaka' && formData.district === 'Dhaka' && formData.areaType === 'Dhaka City';
+
   const deliveryFee =
     cart.length === 0
       ? 0
-      : formData.city === 'Dhaka'
+      : isDhakaCity
         ? 60
         : 120;
 
@@ -71,7 +85,7 @@ export default function Checkout() {
           customer_name: formData.name,
           phone: formData.phone,
           address: formData.address,
-          city: formData.city,
+          city: formData.district,
           items: cart,
           subtotal: subtotal,
           delivery_fee: deliveryFee,
@@ -237,7 +251,7 @@ export default function Checkout() {
 
             <span>
               <strong>ঠিকানা:</strong> {formData.address},{' '}
-              {formData.city}
+              {formData.division}, {formData.district}
             </span>
 
             <span>
@@ -466,11 +480,45 @@ export default function Checkout() {
           />
 
           <select
-            value={formData.city}
+            value={formData.division}
+            onChange={(e) => {
+              const newDivision = e.target.value;
+              setFormData({
+                ...formData,
+                division: newDivision,
+                district: divisionDistricts[newDivision][0],
+                areaType:
+                  newDivision === 'Dhaka'
+                    ? 'Dhaka City'
+                    : 'Outside Dhaka City',
+              });
+            }}
+            style={{
+              padding: '10px',
+              borderRadius: '6px',
+              border: '1px solid #e0e0e0',
+              fontSize: '13px',
+              backgroundColor: '#ffffff',
+            }}
+          >
+            {Object.keys(divisionDistricts).map((division) => (
+              <option key={division} value={division}>
+                বিভাগ: {division}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={formData.district}
             onChange={(e) =>
               setFormData({
                 ...formData,
-                city: e.target.value,
+                district: e.target.value,
+                areaType:
+                  formData.division === 'Dhaka' &&
+                  e.target.value === 'Dhaka'
+                    ? 'Dhaka City'
+                    : 'Outside Dhaka City',
               })
             }
             style={{
@@ -481,15 +529,39 @@ export default function Checkout() {
               backgroundColor: '#ffffff',
             }}
           >
-            <option value="Dhaka">Dhaka</option>
-            <option value="Chittagong">Chittagong</option>
-            <option value="Rajshahi">Rajshahi</option>
-            <option value="Sylhet">Sylhet</option>
-            <option value="Khulna">Khulna</option>
-            <option value="Barisal">Barisal</option>
-            <option value="Rangpur">Rangpur</option>
-            <option value="Mymensingh">Mymensingh</option>
+            {divisionDistricts[formData.division].map((district) => (
+              <option key={district} value={district}>
+                জেলা: {district}
+              </option>
+            ))}
           </select>
+
+          {formData.division === 'Dhaka' &&
+            formData.district === 'Dhaka' && (
+              <select
+                value={formData.areaType}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    areaType: e.target.value,
+                  })
+                }
+                style={{
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: '1px solid #e0e0e0',
+                  fontSize: '13px',
+                  backgroundColor: '#ffffff',
+                }}
+              >
+                <option value="Dhaka City">
+                  Dhaka City — ৳60 Delivery
+                </option>
+                <option value="Outside Dhaka City">
+                  Dhaka District (City-এর বাইরে) — ৳120 Delivery
+                </option>
+              </select>
+            )}
 
           <textarea
             placeholder="সম্পূর্ণ ঠিকানা (গ্রাম/রোড, থানা, জেলা)"
