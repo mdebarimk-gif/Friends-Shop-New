@@ -175,7 +175,90 @@ export default function AccountPage() {
                 <p><strong>Delivery Fee:</strong> ৳{order.delivery_fee}</p>
                 <p><strong>Total:</strong> ৳{order.total}</p>
                 <p><strong>Payment:</strong> {order.payment_method}</p>
-                <p><strong>Status:</strong> {order.status}</p>
+
+                <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+                  <strong>📦 Order Status</strong>
+
+                  {order.status === "cancelled" ? (
+                    <div
+                      style={{
+                        marginTop: "10px",
+                        padding: "12px",
+                        borderRadius: "8px",
+                        background: "#fee2e2",
+                        color: "#b91c1c",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      ❌ Order Cancelled
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: "15px" }}>
+                      {[
+                        { key: "pending", icon: "🕐", label: "অর্ডার গ্রহণ" },
+                        { key: "confirmed", icon: "✅", label: "নিশ্চিত" },
+                        { key: "processing", icon: "⚙️", label: "প্রস্তুত হচ্ছে" },
+                        { key: "shipped", icon: "🚚", label: "পাঠানো হয়েছে" },
+                        { key: "delivered", icon: "🎉", label: "পৌঁছে গেছে" },
+                      ].map((step, index) => {
+                        const statusOrder = [
+                          "pending",
+                          "confirmed",
+                          "processing",
+                          "shipped",
+                          "delivered",
+                        ];
+
+                        const currentIndex = statusOrder.indexOf(
+                          order.status || "pending"
+                        );
+
+                        const stepIndex = statusOrder.indexOf(step.key);
+                        const completed = stepIndex <= currentIndex;
+
+                        return (
+                          <div
+                            key={step.key}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "10px",
+                              marginBottom:
+                                index < 4 ? "8px" : "0",
+                              fontSize: "14px",
+                              fontWeight: completed ? "bold" : "normal",
+                              color: completed ? "#16a34a" : "#999",
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: "28px",
+                                height: "28px",
+                                borderRadius: "50%",
+                                background: completed ? "#dcfce7" : "#f3f4f6",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              {step.icon}
+                            </span>
+
+                            <span>{step.label}</span>
+
+                            {completed && stepIndex === currentIndex && (
+                              <span style={{ marginLeft: "auto", fontSize: "12px" }}>
+                                বর্তমান
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
                 <p>
                   <strong>Date:</strong>{" "}
                   {order.created_at

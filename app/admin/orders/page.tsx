@@ -151,6 +151,7 @@ export default function OrdersPage() {
                 >
                   <option value="pending">Pending</option>
                   <option value="confirmed">Confirmed</option>
+                  <option value="processing">Processing</option>
                   <option value="shipped">Shipped</option>
                   <option value="delivered">Delivered</option>
                   <option value="cancelled">Cancelled</option>
