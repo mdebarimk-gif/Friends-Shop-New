@@ -524,7 +524,7 @@ export default function Checkout() {
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              padding: '10px',
+              padding: '11px',
               marginBottom: '8px',
               border:
                 paymentMethod === 'cod'
@@ -541,22 +541,25 @@ export default function Checkout() {
               name="payment"
               value="cod"
               checked={paymentMethod === 'cod'}
-              onChange={() => setPaymentMethod('cod')}
+              onChange={() => {
+                setPaymentMethod('cod');
+                setTransactionId('');
+              }}
             />
 
-            <div>
-              <div
-                style={{
-                  fontSize: '13px',
-                  fontWeight: 'bold',
-                }}
-              >
-                Cash on Delivery (COD)
-              </div>
+            <div
+              style={{
+                flex: 1,
+                fontSize: '13px',
+                fontWeight: 'bold',
+              }}
+            >
+              Cash on Delivery (COD)
 
               <div
                 style={{
                   fontSize: '11px',
+                  fontWeight: 'normal',
                   color: '#757575',
                   marginTop: '2px',
                 }}
@@ -567,12 +570,12 @@ export default function Checkout() {
           </label>
 
           {/* BKASH */}
-          <label
+          <div
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              padding: '10px',
+              padding: '11px',
               marginBottom: '8px',
               border:
                 paymentMethod === 'bkash'
@@ -581,7 +584,6 @@ export default function Checkout() {
               borderRadius: '8px',
               backgroundColor:
                 paymentMethod === 'bkash' ? '#fff0f6' : '#ffffff',
-              cursor: 'pointer',
             }}
           >
             <input
@@ -592,7 +594,7 @@ export default function Checkout() {
               onChange={() => setPaymentMethod('bkash')}
             />
 
-            <div>
+            <div style={{ flex: 1 }}>
               <div
                 style={{
                   fontSize: '13px',
@@ -601,36 +603,36 @@ export default function Checkout() {
               >
                 🟣 bKash Personal
               </div>
-
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  marginTop: '3px',
-                }}
-              >
-                01994245811
-              </div>
-
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: '#757575',
-                  marginTop: '2px',
-                }}
-              >
-                Send Money করে Transaction ID দিন
-              </div>
             </div>
-          </label>
+
+            <button
+              type="button"
+              onClick={() => {
+                setPaymentMethod('bkash');
+                window.location.href = 'bkash://';
+              }}
+              style={{
+                border: 'none',
+                borderRadius: '6px',
+                padding: '8px 10px',
+                backgroundColor: '#e2136e',
+                color: '#ffffff',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+            >
+              Pay with bKash →
+            </button>
+          </div>
 
           {/* NAGAD */}
-          <label
+          <div
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              padding: '10px',
+              padding: '11px',
               marginBottom: '8px',
               border:
                 paymentMethod === 'nagad'
@@ -639,7 +641,6 @@ export default function Checkout() {
               borderRadius: '8px',
               backgroundColor:
                 paymentMethod === 'nagad' ? '#fff7ed' : '#ffffff',
-              cursor: 'pointer',
             }}
           >
             <input
@@ -650,7 +651,7 @@ export default function Checkout() {
               onChange={() => setPaymentMethod('nagad')}
             />
 
-            <div>
+            <div style={{ flex: 1 }}>
               <div
                 style={{
                   fontSize: '13px',
@@ -659,36 +660,37 @@ export default function Checkout() {
               >
                 🟢 Nagad Personal
               </div>
-
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  marginTop: '3px',
-                }}
-              >
-                01994245811
-              </div>
-
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: '#757575',
-                  marginTop: '2px',
-                }}
-              >
-                Send Money করে Transaction ID দিন
-              </div>
             </div>
-          </label>
+
+            <button
+              type="button"
+              onClick={() => {
+                setPaymentMethod('nagad');
+                window.location.href = 'nagad://';
+              }}
+              style={{
+                border: 'none',
+                borderRadius: '6px',
+                padding: '8px 10px',
+                backgroundColor: '#f58220',
+                color: '#ffffff',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+            >
+              Pay with Nagad →
+            </button>
+          </div>
 
           {/* BANK PAYMENT */}
-          <label
+          <div
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              padding: '10px',
+              padding: '11px',
+              marginBottom: '8px',
               border:
                 paymentMethod === 'bank'
                   ? '1px solid #1976d2'
@@ -696,7 +698,6 @@ export default function Checkout() {
               borderRadius: '8px',
               backgroundColor:
                 paymentMethod === 'bank' ? '#eef6ff' : '#ffffff',
-              cursor: 'pointer',
             }}
           >
             <input
@@ -707,7 +708,7 @@ export default function Checkout() {
               onChange={() => setPaymentMethod('bank')}
             />
 
-            <div>
+            <div style={{ flex: 1 }}>
               <div
                 style={{
                   fontSize: '13px',
@@ -716,33 +717,25 @@ export default function Checkout() {
               >
                 🏦 Bank Payment
               </div>
-
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: '#555',
-                  marginTop: '4px',
-                  lineHeight: '1.6',
-                }}
-              >
-                <div>
-                  <strong>Bank:</strong> Dutch-Bangla Bank (DBBL)
-                </div>
-
-                <div>
-                  <strong>Account Name:</strong> MD EBRAHIM KHALIL
-                </div>
-
-                <div>
-                  <strong>Account Number:</strong> 2171600005018
-                </div>
-
-                <div>
-                  <strong>Branch:</strong> Ruhitpur
-                </div>
-              </div>
             </div>
-          </label>
+
+            <button
+              type="button"
+              onClick={() => setPaymentMethod('bank')}
+              style={{
+                border: 'none',
+                borderRadius: '6px',
+                padding: '8px 10px',
+                backgroundColor: '#1976d2',
+                color: '#ffffff',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+            >
+              Bank Payment →
+            </button>
+          </div>
 
           {/* TRANSACTION ID */}
           {(paymentMethod === 'bkash' ||
@@ -751,8 +744,54 @@ export default function Checkout() {
             <div
               style={{
                 marginTop: '10px',
+                padding: '10px',
+                borderRadius: '8px',
+                backgroundColor: '#f7f7f7',
               }}
             >
+              {paymentMethod === 'bkash' && (
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: '#555',
+                    marginBottom: '8px',
+                  }}
+                >
+                  bKash App থেকে পেমেন্ট সম্পন্ন করে Transaction ID দিন।
+                </div>
+              )}
+
+              {paymentMethod === 'nagad' && (
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: '#555',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Nagad App থেকে পেমেন্ট সম্পন্ন করে Transaction ID দিন।
+                </div>
+              )}
+
+              {paymentMethod === 'bank' && (
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: '#555',
+                    marginBottom: '8px',
+                    lineHeight: '1.6',
+                  }}
+                >
+                  <strong>Bank:</strong> Dutch-Bangla Bank (DBBL)
+                  <br />
+                  <strong>Account Name:</strong> MD EBRAHIM KHALIL
+                  <br />
+                  <strong>Account Number:</strong> 2171600005018
+                  <br />
+                  <strong>Branch:</strong> Ruhitpur
+                </div>
+              )}
+
               <input
                 type="text"
                 placeholder="Transaction ID লিখুন"
@@ -770,16 +809,6 @@ export default function Checkout() {
                   outline: 'none',
                 }}
               />
-
-              <div
-                style={{
-                  fontSize: '10px',
-                  color: '#757575',
-                  marginTop: '4px',
-                }}
-              >
-                পেমেন্ট করার পর Transaction ID এখানে লিখুন।
-              </div>
             </div>
           )}
         </div>
