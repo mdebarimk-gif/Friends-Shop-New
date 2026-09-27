@@ -9,6 +9,10 @@ type Order = {
   phone: string;
   address: string;
   city: string;
+  division: string | null;
+  district: string | null;
+  upazila: string | null;
+  area_type: string | null;
   items: any[];
   subtotal: number;
   delivery_fee: number;
@@ -161,7 +165,19 @@ export default function OrdersPage() {
               <p><strong>নাম:</strong> {order.customer_name}</p>
               <p><strong>ফোন:</strong> {order.phone}</p>
               <p>
-                <strong>ঠিকানা:</strong> {order.address}, {order.city}
+                <strong>ঠিকানা:</strong> {order.address}
+              </p>
+              <p>
+                <strong>বিভাগ:</strong> {order.division || "-"}
+              </p>
+              <p>
+                <strong>জেলা:</strong> {order.district || order.city || "-"}
+              </p>
+              <p>
+                <strong>উপজেলা/থানা:</strong> {order.upazila || "-"}
+              </p>
+              <p>
+                <strong>এলাকা:</strong> {order.area_type || "-"}
               </p>
               <p>
                 <strong>Payment:</strong> {order.payment_method}
@@ -197,7 +213,7 @@ export default function OrdersPage() {
                 <strong>Subtotal:</strong> ৳{order.subtotal}
               </p>
               <p>
-                <strong>Delivery:</strong> ৳{order.delivery_fee}
+                <strong>Delivery Fee:</strong> ৳{order.delivery_fee}
               </p>
               <p style={{ fontSize: "18px" }}>
                 <strong>Total: ৳{order.total}</strong>
