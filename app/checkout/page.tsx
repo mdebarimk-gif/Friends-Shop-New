@@ -23,7 +23,13 @@ export default function Checkout() {
     0
   );
 
-  const deliveryFee = cart.length > 0 ? 60 : 0;
+  const deliveryFee =
+    cart.length === 0
+      ? 0
+      : formData.city === 'Dhaka'
+        ? 60
+        : 120;
+
   const total = subtotal + deliveryFee;
 
   const handleSubmit = async (e: React.FormEvent) => {
