@@ -30,6 +30,7 @@ function formatPrice(price: number) {
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   const { addToCart } = useCart();
@@ -69,6 +70,18 @@ export default function Home() {
     });
 
     alert(`🛒 "${product.title}" Cart-এ যোগ হয়েছে!`);
+  };
+
+  const handleCopyProductLink = async (product: Product) => {
+    const productUrl = `${window.location.origin}/product/${product.id}`;
+
+    try {
+      await navigator.clipboard.writeText(productUrl);
+      alert('🔗 Product Link কপি হয়েছে!');
+    } catch (error) {
+      console.error('Copy link error:', error);
+      alert('লিংক কপি করা যায়নি।');
+    }
   };
 
   return (
@@ -168,6 +181,37 @@ export default function Home() {
               key={product.id}
               className="product-card"
             >
+              <div className="product-menu">
+                <button
+                  type="button"
+                  className="product-menu-button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActiveMenu(
+                      activeMenu === product.id ? null : product.id
+                    );
+                  }}
+                  aria-label="Product menu"
+                >
+                  ⋮
+                </button>
+
+                {activeMenu === product.id && (
+                  <div className="product-menu-dropdown">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleCopyProductLink(product);
+                        setActiveMenu(null);
+                      }}
+                    >
+                      🔗 Copy Product Link
+                    </button>
+                  </div>
+                )}
+              </div>
+
               {/* PRODUCT */}
               <a
                 href={`/product/${product.id}`}
@@ -454,6 +498,53 @@ export default function Home() {
           color: #212121;
           box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
           overflow: hidden;
+          position: relative;
+        }
+
+        .product-menu {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          z-index: 10;
+        }
+
+        .product-menu-button {
+          width: 34px;
+          height: 34px;
+          border: none;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.95);
+          color: #222;
+          font-size: 24px;
+          line-height: 30px;
+          cursor: pointer;
+          box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-menu-dropdown {
+          position: absolute;
+          top: 40px;
+          right: 0;
+          min-width: 190px;
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+          padding: 5px;
+        }
+
+        .product-menu-dropdown button {
+          width: 100%;
+          border: none;
+          background: transparent;
+          padding: 10px;
+          text-align: left;
+          font-size: 14px;
+          cursor: pointer;
+          border-radius: 6px;
+        }
+
+        .product-menu-dropdown button:hover {
+          background: #f5f5f5;
         }
 
         .product-link {
