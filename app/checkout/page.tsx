@@ -15,6 +15,7 @@ export default function Checkout() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [transactionId, setTransactionId] = useState('');
   const [isOrdered, setIsOrdered] = useState(false);
 
   const subtotal = cart.reduce(
@@ -38,6 +39,16 @@ export default function Checkout() {
       return;
     }
 
+    if (
+      (paymentMethod === 'bkash' ||
+        paymentMethod === 'nagad' ||
+        paymentMethod === 'bank') &&
+      !transactionId.trim()
+    ) {
+      alert('দয়া করে Transaction ID লিখুন।');
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('orders')
@@ -51,6 +62,10 @@ export default function Checkout() {
           delivery_fee: deliveryFee,
           total: total,
           payment_method: paymentMethod,
+          transaction_id:
+            paymentMethod === 'cod'
+              ? null
+              : transactionId.trim(),
           status: 'pending',
         });
 
@@ -503,15 +518,22 @@ export default function Checkout() {
             পেমেন্ট পদ্ধতি
           </h2>
 
+          {/* CASH ON DELIVERY */}
           <label
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
               padding: '10px',
-              border: '1px solid #ff4600',
+              marginBottom: '8px',
+              border:
+                paymentMethod === 'cod'
+                  ? '1px solid #ff4600'
+                  : '1px solid #e0e0e0',
               borderRadius: '8px',
-              backgroundColor: '#fff0e6',
+              backgroundColor:
+                paymentMethod === 'cod' ? '#fff0e6' : '#ffffff',
+              cursor: 'pointer',
             }}
           >
             <input
@@ -543,6 +565,223 @@ export default function Checkout() {
               </div>
             </div>
           </label>
+
+          {/* BKASH */}
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px',
+              marginBottom: '8px',
+              border:
+                paymentMethod === 'bkash'
+                  ? '1px solid #e2136e'
+                  : '1px solid #e0e0e0',
+              borderRadius: '8px',
+              backgroundColor:
+                paymentMethod === 'bkash' ? '#fff0f6' : '#ffffff',
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type="radio"
+              name="payment"
+              value="bkash"
+              checked={paymentMethod === 'bkash'}
+              onChange={() => setPaymentMethod('bkash')}
+            />
+
+            <div>
+              <div
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 'bold',
+                }}
+              >
+                🟣 bKash Personal
+              </div>
+
+              <div
+                style={{
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  marginTop: '3px',
+                }}
+              >
+                01994245811
+              </div>
+
+              <div
+                style={{
+                  fontSize: '11px',
+                  color: '#757575',
+                  marginTop: '2px',
+                }}
+              >
+                Send Money করে Transaction ID দিন
+              </div>
+            </div>
+          </label>
+
+          {/* NAGAD */}
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px',
+              marginBottom: '8px',
+              border:
+                paymentMethod === 'nagad'
+                  ? '1px solid #f58220'
+                  : '1px solid #e0e0e0',
+              borderRadius: '8px',
+              backgroundColor:
+                paymentMethod === 'nagad' ? '#fff7ed' : '#ffffff',
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type="radio"
+              name="payment"
+              value="nagad"
+              checked={paymentMethod === 'nagad'}
+              onChange={() => setPaymentMethod('nagad')}
+            />
+
+            <div>
+              <div
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 'bold',
+                }}
+              >
+                🟢 Nagad Personal
+              </div>
+
+              <div
+                style={{
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  marginTop: '3px',
+                }}
+              >
+                01994245811
+              </div>
+
+              <div
+                style={{
+                  fontSize: '11px',
+                  color: '#757575',
+                  marginTop: '2px',
+                }}
+              >
+                Send Money করে Transaction ID দিন
+              </div>
+            </div>
+          </label>
+
+          {/* BANK PAYMENT */}
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px',
+              border:
+                paymentMethod === 'bank'
+                  ? '1px solid #1976d2'
+                  : '1px solid #e0e0e0',
+              borderRadius: '8px',
+              backgroundColor:
+                paymentMethod === 'bank' ? '#eef6ff' : '#ffffff',
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type="radio"
+              name="payment"
+              value="bank"
+              checked={paymentMethod === 'bank'}
+              onChange={() => setPaymentMethod('bank')}
+            />
+
+            <div>
+              <div
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 'bold',
+                }}
+              >
+                🏦 Bank Payment
+              </div>
+
+              <div
+                style={{
+                  fontSize: '11px',
+                  color: '#555',
+                  marginTop: '4px',
+                  lineHeight: '1.6',
+                }}
+              >
+                <div>
+                  <strong>Bank:</strong> Dutch-Bangla Bank (DBBL)
+                </div>
+
+                <div>
+                  <strong>Account Name:</strong> MD EBRAHIM KHALIL
+                </div>
+
+                <div>
+                  <strong>Account Number:</strong> 2171600005018
+                </div>
+
+                <div>
+                  <strong>Branch:</strong> Ruhitpur
+                </div>
+              </div>
+            </div>
+          </label>
+
+          {/* TRANSACTION ID */}
+          {(paymentMethod === 'bkash' ||
+            paymentMethod === 'nagad' ||
+            paymentMethod === 'bank') && (
+            <div
+              style={{
+                marginTop: '10px',
+              }}
+            >
+              <input
+                type="text"
+                placeholder="Transaction ID লিখুন"
+                required
+                name="transaction_id"
+                value={transactionId}
+                onChange={(e) => setTransactionId(e.target.value)}
+                style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: '1px solid #e0e0e0',
+                  fontSize: '13px',
+                  outline: 'none',
+                }}
+              />
+
+              <div
+                style={{
+                  fontSize: '10px',
+                  color: '#757575',
+                  marginTop: '4px',
+                }}
+              >
+                পেমেন্ট করার পর Transaction ID এখানে লিখুন।
+              </div>
+            </div>
+          )}
         </div>
 
         {/* SUMMARY */}
