@@ -131,6 +131,10 @@ const divisionDistricts: Record<string, string[]> = {
             paymentMethod === 'cod'
               ? null
               : transactionId.trim(),
+          division: formData.division,
+          district: formData.district,
+          upazila: formData.upazila || null,
+          area_type: formData.areaType,
           status: 'pending',
         });
 
