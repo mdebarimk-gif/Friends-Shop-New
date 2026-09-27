@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCart } from '../../components/CartContext';
 import { supabase } from '../../lib/supabase';
 
@@ -15,6 +15,41 @@ const divisionDistricts: Record<string, string[]> = {
   Rangpur: ['Dinajpur','Gaibandha','Kurigram','Lalmonirhat','Nilphamari','Panchagarh','Rangpur','Thakurgaon'],
   Mymensingh: ['Jamalpur','Mymensingh','Netrokona','Sherpur'],
 };
+  const [geoData, setGeoData] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/bangladesh-geo.json')
+      .then((res) => res.json())
+      .then((data) => setGeoData(data))
+      .catch(() => setGeoData([]));
+  }, []);
+
+  const districtUpazilas: Record<string, string[]> = {};
+
+  geoData.forEach((division) => {
+    division.districts?.forEach((district: any) => {
+      const upazilas =
+        district.upazilas?.map(
+          (upazila: any) => upazila.bn_name || upazila.name
+        ) || [];
+
+      districtUpazilas[district.name] = upazilas;
+
+      if (district.bn_name) {
+        districtUpazilas[district.bn_name] = upazilas;
+      }
+    });
+  });
+
+  geoData.forEach((division) => {
+    division.districts?.forEach((district: any) => {
+      districtUpazilas[district.bn_name || district.name] =
+        district.upazilas?.map(
+          (upazila: any) => upazila.bn_name || upazila.name
+        ) || [];
+    });
+  });
+
   const { cart, clearCart } = useCart();
 
   const [formData, setFormData] = useState({
@@ -24,6 +59,7 @@ const divisionDistricts: Record<string, string[]> = {
     division: 'Dhaka',
     district: 'Dhaka',
     areaType: 'Dhaka City',
+    upazila: '',
   });
 
   const [paymentMethod, setPaymentMethod] = useState('cod');
@@ -535,6 +571,32 @@ const divisionDistricts: Record<string, string[]> = {
               </option>
             ))}
           </select>
+
+          {districtUpazilas[formData.district] && (
+            <select
+              value={formData.upazila}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  upazila: e.target.value,
+                })
+              }
+              style={{
+                padding: '10px',
+                borderRadius: '6px',
+                border: '1px solid #e0e0e0',
+                fontSize: '13px',
+                backgroundColor: '#ffffff',
+              }}
+            >
+              <option value="">উপজেলা নির্বাচন করুন</option>
+              {districtUpazilas[formData.district].map((upazila) => (
+                <option key={upazila} value={upazila}>
+                  উপজেলা: {upazila}
+                </option>
+              ))}
+            </select>
+          )}
 
           {formData.division === 'Dhaka' &&
             formData.district === 'Dhaka' && (
