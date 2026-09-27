@@ -16,6 +16,8 @@ export default function AddProduct() {
 
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string>('');
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -67,6 +69,38 @@ export default function AddProduct() {
     setMessage('');
   };
 
+  const handleVideoChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0] || null;
+
+    if (!file) {
+      setVideoFile(null);
+      setVideoPreview('');
+      return;
+    }
+
+    if (!file.type.startsWith('video/')) {
+      setMessage('❌ শুধু Video ফাইল নির্বাচন করুন।');
+      e.target.value = '';
+      setVideoFile(null);
+      setVideoPreview('');
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      setMessage('❌ ভিডিওর সাইজ সর্বোচ্চ 50 MB হতে পারবে।');
+      e.target.value = '';
+      setVideoFile(null);
+      setVideoPreview('');
+      return;
+    }
+
+    setVideoFile(file);
+    setVideoPreview(URL.createObjectURL(file));
+    setMessage('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -93,6 +127,7 @@ export default function AddProduct() {
 
     try {
       const imageUrls: string[] = [];
+      let videoUrl = '';
 
       // সব ছবি Upload
       for (const imageFile of imageFiles) {
@@ -145,6 +180,53 @@ export default function AddProduct() {
       // প্রথম ছবিটি প্রধান ছবি
       const mainImageUrl = imageUrls[0];
 
+      // Product Video Upload
+      if (videoFile) {
+        const videoExt =
+          videoFile.name.split('.').pop()?.toLowerCase() ||
+          'mp4';
+
+        const videoFileName =
+          `${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(2, 8)}.${videoExt}`;
+
+        const videoPath = `products/videos/${videoFileName}`;
+
+        const { error: videoUploadError } = await supabase.storage
+          .from('product-images')
+          .upload(videoPath, videoFile, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (videoUploadError) {
+          console.error(videoUploadError);
+
+          if (uploadedFilePaths.length > 0) {
+            await supabase.storage
+              .from('product-images')
+              .remove(uploadedFilePaths);
+          }
+
+          setMessage(
+            `❌ ভিডিও Upload করা যায়নি: ${videoUploadError.message}`
+          );
+
+          setSaving(false);
+          return;
+        }
+
+        uploadedFilePaths.push(videoPath);
+
+        const { data: videoPublicUrlData } =
+          supabase.storage
+            .from('product-images')
+            .getPublicUrl(videoPath);
+
+        videoUrl = videoPublicUrlData.publicUrl;
+      }
+
       // Product Supabase-এ Save
       const { error: productError } = await supabase
         .from('products')
@@ -167,6 +249,9 @@ export default function AddProduct() {
 
           // সব ছবির URL
           image_urls: imageUrls,
+
+          // Product Video URL
+          video_url: videoUrl || null,
         });
 
       if (productError) {
@@ -470,6 +555,60 @@ export default function AddProduct() {
         </label>
 
         {/* Image Preview */}
+        <div style={{ marginTop: '20px' }}>
+          <label
+            htmlFor="product-video-upload"
+            style={{
+              display: 'block',
+              fontWeight: 'bold',
+              marginBottom: '8px',
+            }}
+          >
+            🎥 Product Video
+          </label>
+
+          <input
+            id="product-video-upload"
+            name="product-video"
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+
+              if (!file) return;
+
+              if (!file.type.startsWith('video/')) {
+                setMessage('❌ এটি Video ফাইল নয়।');
+                e.target.value = '';
+                return;
+              }
+
+              if (file.size > 50 * 1024 * 1024) {
+                setMessage('❌ ভিডিওর সাইজ সর্বোচ্চ 50 MB হতে পারবে।');
+                e.target.value = '';
+                return;
+              }
+
+              setVideoFile(file);
+              setVideoPreview(URL.createObjectURL(file));
+              setMessage('✅ ভিডিও নির্বাচন করা হয়েছে।');
+            }}
+          />
+
+          {videoPreview && (
+            <video
+              src={videoPreview}
+              controls
+              style={{
+                width: '100%',
+                maxWidth: '400px',
+                marginTop: '10px',
+                borderRadius: '8px',
+              }}
+            />
+          )}
+        </div>
+
         {imagePreviews.length > 0 && (
           <div
             style={{
