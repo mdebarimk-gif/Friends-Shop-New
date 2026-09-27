@@ -16,6 +16,7 @@ type Product = {
   description: string | null;
   image_url: string | null;
   image_urls: string[] | null;
+  video_url: string | null;
 };
 
 export default function ProductDetails() {
@@ -341,6 +342,42 @@ export default function ProductDetails() {
                 />
               </button>
             ))}
+          </div>
+        )}
+
+        {/* Product Video */}
+        {product.video_url && (
+          <div
+            style={{
+              marginTop: '20px',
+              backgroundColor: '#fff',
+              padding: '12px',
+              borderRadius: '8px',
+              boxSizing: 'border-box',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                marginBottom: '10px',
+              }}
+            >
+              🎥 Product Video
+            </div>
+
+            <video
+              src={product.video_url}
+              controls
+              playsInline
+              preload="metadata"
+              style={{
+                width: '100%',
+                maxHeight: '500px',
+                borderRadius: '8px',
+                backgroundColor: '#000',
+              }}
+            />
           </div>
         )}
       </div>

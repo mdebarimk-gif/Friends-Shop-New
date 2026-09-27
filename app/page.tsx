@@ -266,12 +266,15 @@ export default function Home() {
         .hero-banner {
           position: relative;
           width: 100%;
-          height: 210px;
+          height: auto;
+          aspect-ratio: 3 / 2;
           border-radius: 14px;
           overflow: hidden;
           margin-bottom: 12px;
           background-image: url('/hero-banner.png');
-          background-size: cover;
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+          background-color: #f5f5f5;
           background-position: center;
         }
 
