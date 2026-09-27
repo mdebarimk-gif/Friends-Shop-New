@@ -171,6 +171,34 @@ export default function AccountPage() {
                   )}
                 </div>
 
+                <div
+                  style={{
+                    marginTop: "12px",
+                    marginBottom: "12px",
+                    padding: "12px",
+                    background: "#fff",
+                    border: "1px solid #eee",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <strong>🏠 Delivery Address</strong>
+                  <p style={{ margin: "8px 0 0" }}>
+                    <strong>ঠিকানা:</strong> {order.address || "-"}
+                  </p>
+                  <p style={{ margin: "5px 0 0" }}>
+                    <strong>বিভাগ:</strong> {order.division || "-"}
+                  </p>
+                  <p style={{ margin: "5px 0 0" }}>
+                    <strong>জেলা:</strong> {order.district || order.city || "-"}
+                  </p>
+                  <p style={{ margin: "5px 0 0" }}>
+                    <strong>উপজেলা/থানা:</strong> {order.upazila || "-"}
+                  </p>
+                  <p style={{ margin: "5px 0 0" }}>
+                    <strong>এলাকা:</strong> {order.area_type || "-"}
+                  </p>
+                </div>
+
                 <p><strong>Subtotal:</strong> ৳{order.subtotal}</p>
                 <p><strong>Delivery Fee:</strong> ৳{order.delivery_fee}</p>
                 <p><strong>Total:</strong> ৳{order.total}</p>
