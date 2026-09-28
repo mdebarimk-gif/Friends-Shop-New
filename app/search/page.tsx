@@ -71,6 +71,7 @@ export default function SearchPage() {
       name: product.title,
       price: product.price,
       image: product.image_url || '',
+      tag: product.tag || null,
     });
 
     setMessage(`✓ "${product.title}" Cart-এ যোগ হয়েছে`);

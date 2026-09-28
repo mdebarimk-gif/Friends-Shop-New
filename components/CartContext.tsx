@@ -7,6 +7,7 @@ type CartItem = {
   name: string;
   price: number;
   image: string;
+  tag: string | null;
   quantity: number;
 };
 
@@ -28,8 +29,16 @@ export function CartProvider({
 
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
+
     if (savedCart) {
-      setCart(JSON.parse(savedCart));
+      const parsedCart = JSON.parse(savedCart);
+
+      setCart(
+        parsedCart.map((item: any) => ({
+          ...item,
+          tag: item.tag ?? null,
+        }))
+      );
     }
   }, []);
 

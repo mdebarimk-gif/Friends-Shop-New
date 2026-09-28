@@ -11,7 +11,16 @@ export default function ShoppingCart() {
     0
   );
 
-  const deliveryFee = cart.length > 0 ? 60 : 0;
+  const hasFreeShipping =
+    cart.length > 0 &&
+    cart.every((item) => item.tag === 'Free Shipping 🚚');
+
+  const deliveryFee =
+    cart.length === 0
+      ? 0
+      : hasFreeShipping
+        ? 0
+        : 60;
   const total = subtotal + deliveryFee;
 
   const decreaseQuantity = (id: number) => {
@@ -34,6 +43,7 @@ export default function ShoppingCart() {
         name: item.name,
         price: item.price,
         image: item.image,
+        tag: item.tag || null,
       });
     }
   };
@@ -48,6 +58,7 @@ export default function ShoppingCart() {
       name: item.name,
       price: item.price,
       image: item.image,
+        tag: item.tag || null,
     });
   };
 

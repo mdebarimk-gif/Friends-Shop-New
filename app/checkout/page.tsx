@@ -73,12 +73,18 @@ const divisionDistricts: Record<string, string[]> = {
 
   const isDhakaCity = formData.division === 'Dhaka' && formData.district === 'Dhaka' && formData.areaType === 'Dhaka City';
 
+  const hasFreeShipping =
+    cart.length > 0 &&
+    cart.every((item) => item.tag === 'Free Shipping 🚚');
+
   const deliveryFee =
     cart.length === 0
       ? 0
-      : isDhakaCity
-        ? 60
-        : 120;
+      : hasFreeShipping
+        ? 0
+        : isDhakaCity
+          ? 60
+          : 120;
 
   const total = subtotal + deliveryFee;
 

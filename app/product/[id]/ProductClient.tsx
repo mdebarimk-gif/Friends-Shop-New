@@ -193,6 +193,7 @@ export default function ProductDetails() {
         name: product.title,
         price: product.price,
         image: product.image_url || '',
+      tag: product.tag || null,
       });
     }
 
@@ -219,6 +220,7 @@ export default function ProductDetails() {
         name: product.title,
         price: product.price,
         image: product.image_url || '',
+      tag: product.tag || null,
       });
     }
 

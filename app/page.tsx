@@ -67,6 +67,7 @@ export default function Home() {
       name: product.title,
       price: product.price,
       image: product.image_url || '',
+      tag: product.tag || null,
     });
 
     alert(`🛒 "${product.title}" Cart-এ যোগ হয়েছে!`);

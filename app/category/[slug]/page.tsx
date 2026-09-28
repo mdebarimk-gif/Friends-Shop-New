@@ -69,6 +69,7 @@ export default function CategoryPage({
       id: product.id,
       name: product.title,
       image: product.image_url || '',
+      tag: product.tag || null,
       price: product.price,
     });
 
@@ -80,6 +81,7 @@ export default function CategoryPage({
       id: product.id,
       name: product.title,
       image: product.image_url || '',
+      tag: product.tag || null,
       price: product.price,
     });
 
