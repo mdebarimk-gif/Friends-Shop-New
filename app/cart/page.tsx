@@ -225,8 +225,9 @@ export default function ShoppingCart() {
                         display: 'flex',
                         alignItems: 'center',
                         border: '1px solid #e0e0e0',
-                        borderRadius: '5px',
+                        borderRadius: '8px',
                         overflow: 'hidden',
+                        backgroundColor: '#fafafa',
                       }}
                     >
                       <button
@@ -234,8 +235,8 @@ export default function ShoppingCart() {
                         style={{
                           border: 'none',
                           backgroundColor: '#f5f5f5',
-                          padding: '5px 10px',
-                          fontSize: '14px',
+                          padding: '6px 11px',
+                          fontSize: '15px',
                           fontWeight: 'bold',
                           cursor: 'pointer',
                         }}
@@ -259,8 +260,8 @@ export default function ShoppingCart() {
                         style={{
                           border: 'none',
                           backgroundColor: '#f5f5f5',
-                          padding: '5px 10px',
-                          fontSize: '14px',
+                          padding: '6px 11px',
+                          fontSize: '15px',
                           fontWeight: 'bold',
                           cursor: 'pointer',
                         }}
@@ -338,6 +339,25 @@ export default function ShoppingCart() {
                 paddingTop: '4px',
               }}
             >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '13px',
+                color: '#757575',
+              }}
+            >
+              <span>Delivery</span>
+              <span
+                style={{
+                  color: deliveryFee === 0 ? '#16823b' : '#757575',
+                  fontWeight: deliveryFee === 0 ? '700' : '500',
+                }}
+              >
+                {deliveryFee === 0 ? 'FREE' : `৳${deliveryFee}`}
+              </span>
+            </div>
+
               <span>Product Total</span>
               <span style={{ color: '#ff4600' }}>
                 ৳{subtotal}
@@ -354,17 +374,17 @@ export default function ShoppingCart() {
             bottom: '60px',
             left: 0,
             zIndex: 90,
-            minHeight: '60px',
+            minHeight: '68px',
             width: '100%',
             backgroundColor: '#ffffff',
-            borderTop: '1px solid #e0e0e0',
-            padding: '8px 12px',
+            borderTop: '1px solid #eeeeee',
+            padding: '10px 14px',
             boxSizing: 'border-box',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '12px',
-            boxShadow: '0 -4px 10px rgba(0,0,0,0.06)',
+            boxShadow: '0 -4px 14px rgba(0,0,0,0.08)',
           }}
         >
           <div
@@ -377,6 +397,7 @@ export default function ShoppingCart() {
               style={{
                 fontSize: '11px',
                 color: '#757575',
+                marginBottom: '2px',
               }}
             >
               Total:
@@ -384,8 +405,8 @@ export default function ShoppingCart() {
 
             <span
               style={{
-                fontSize: '16px',
-                fontWeight: 'bold',
+                fontSize: '18px',
+                fontWeight: '800',
                 color: '#ff4600',
               }}
             >
@@ -399,12 +420,12 @@ export default function ShoppingCart() {
               backgroundColor: '#ff4600',
               color: '#ffffff',
               textDecoration: 'none',
-              borderRadius: '6px',
-              padding: '10px 24px',
+              borderRadius: '9px',
+              padding: '12px 22px',
               fontSize: '14px',
-              fontWeight: 'bold',
+              fontWeight: '800',
               display: 'inline-block',
-              boxShadow: '0 2px 6px rgba(255,70,0,0.2)',
+              boxShadow: '0 4px 10px rgba(255,70,0,0.25)',
             }}
           >
             Proceed to Checkout
