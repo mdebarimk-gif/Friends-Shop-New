@@ -230,7 +230,19 @@ export default function Home() {
                 </div>
 
                 {product.tag && (
-                  <span className="product-tag">
+                  <span
+                    className={`product-tag ${
+                      product.tag.includes('Free Shipping')
+                        ? 'tag-free-shipping'
+                        : product.tag.includes('Free Gift')
+                          ? 'tag-free-gift'
+                          : product.tag.includes('Best Seller')
+                            ? 'tag-best-seller'
+                            : product.tag.includes('Top Deal')
+                              ? 'tag-top-deal'
+                              : ''
+                    }`}
+                  >
                     {product.tag}
                   </span>
                 )}
@@ -578,18 +590,38 @@ export default function Home() {
           display: inline-block;
           max-width: 100%;
           margin-top: 6px;
-          background: #e8f8ee;
-          color: #16823b;
-          border: 1px solid #b7e4c7;
           font-size: 9px;
           font-weight: 700;
           padding: 4px 8px;
           border-radius: 999px;
           line-height: 1.2;
-          border-radius: 3px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+        }
+
+        .tag-free-shipping {
+          background: #e8f8ee;
+          color: #16823b;
+          border: 1px solid #b7e4c7;
+        }
+
+        .tag-free-gift {
+          background: #eaf3ff;
+          color: #1769aa;
+          border: 1px solid #b8d8f5;
+        }
+
+        .tag-best-seller {
+          background: #fff3e6;
+          color: #e66a00;
+          border: 1px solid #ffd1a8;
+        }
+
+        .tag-top-deal {
+          background: #ffeaea;
+          color: #d32f2f;
+          border: 1px solid #f3b5b5;
         }
 
         .product-title {

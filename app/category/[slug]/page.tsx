@@ -286,18 +286,17 @@ export default function CategoryPage({
               >
                 {product.tag && (
                   <div
-                    style={{
-                      display: 'inline-block',
-                      fontSize: '10px',
-                      color: '#16823b',
-                      backgroundColor: '#e8f8ee',
-                      border: '1px solid #b7e4c7',
-                      fontWeight: '700',
-                      padding: '4px 8px',
-                      borderRadius: '999px',
-                      lineHeight: '1.2',
-                      marginBottom: '6px',
-                    }}
+                    className={`product-tag ${
+                      product.tag.includes('Free Shipping')
+                        ? 'tag-free-shipping'
+                        : product.tag.includes('Free Gift')
+                          ? 'tag-free-gift'
+                          : product.tag.includes('Best Seller')
+                            ? 'tag-best-seller'
+                            : product.tag.includes('Top Deal')
+                              ? 'tag-top-deal'
+                              : ''
+                    }`}
                   >
                     {product.tag}
                   </div>

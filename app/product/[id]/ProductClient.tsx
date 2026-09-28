@@ -493,18 +493,17 @@ export default function ProductDetails() {
 
         {product.tag && (
           <div
-            style={{
-              display: 'inline-block',
-              width: 'fit-content',
-              backgroundColor: '#e8f8ee',
-              color: '#16823b',
-              border: '1px solid #b7e4c7',
-              padding: '5px 10px',
-              borderRadius: '999px',
-              fontSize: '11px',
-              fontWeight: '700',
-              lineHeight: '1.2',
-            }}
+            className={`product-tag ${
+              product.tag.includes('Free Shipping')
+                ? 'tag-free-shipping'
+                : product.tag.includes('Free Gift')
+                  ? 'tag-free-gift'
+                  : product.tag.includes('Best Seller')
+                    ? 'tag-best-seller'
+                    : product.tag.includes('Top Deal')
+                      ? 'tag-top-deal'
+                      : ''
+            }`}
           >
             {product.tag}
           </div>
