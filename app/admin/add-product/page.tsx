@@ -12,6 +12,7 @@ export default function AddProduct() {
     stock: '',
     tag: 'Free Shipping 🚚',
     colors: '',
+    sizes: '',
     description: '',
   });
 
@@ -253,6 +254,14 @@ export default function AddProduct() {
                 .filter(Boolean)
             : [],
 
+          // Product Sizes
+          sizes: productData.sizes
+            ? productData.sizes
+                .split(',')
+                .map((size) => size.trim())
+                .filter(Boolean)
+            : [],
+
           // প্রথম ছবি
           image_url: mainImageUrl,
 
@@ -295,6 +304,7 @@ export default function AddProduct() {
         stock: '',
         tag: 'Free Shipping 🚚',
         colors: '',
+        sizes: '',
         description: '',
       });
 
@@ -535,6 +545,32 @@ export default function AddProduct() {
             }}
           >
             একাধিক রং দিতে কমা (,) ব্যবহার করুন।
+          </div>
+        </label>
+
+        {/* Sizes */}
+        <label style={labelStyle}>
+          পণ্যের সাইজ
+          <input
+            type="text"
+            value={productData.sizes}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                sizes: e.target.value,
+              })
+            }
+            placeholder="যেমন: S, M, L, XL, XXL"
+            style={inputStyle}
+          />
+          <div
+            style={{
+              marginTop: '5px',
+              fontSize: '11px',
+              color: '#777',
+            }}
+          >
+            একাধিক সাইজ দিতে কমা (,) ব্যবহার করুন।
           </div>
         </label>
 

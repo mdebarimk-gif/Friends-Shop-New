@@ -9,13 +9,18 @@ type CartItem = {
   image: string;
   tag: string | null;
   color: string | null;
+  size: string | null;
   quantity: number;
 };
 
 type CartContextType = {
   cart: CartItem[];
   addToCart: (product: Omit<CartItem, "quantity">) => void;
-  removeFromCart: (id: number, color?: string | null) => void;
+  removeFromCart: (
+    id: number,
+    color?: string | null,
+    size?: string | null
+  ) => void;
   clearCart: () => void;
 };
 
@@ -39,6 +44,7 @@ export function CartProvider({
           ...item,
           tag: item.tag ?? null,
           color: item.color ?? null,
+          size: item.size ?? null,
         }))
       );
     }
@@ -53,13 +59,15 @@ export function CartProvider({
       const existing = prev.find(
         (item) =>
           item.id === product.id &&
-          item.color === product.color
+          item.color === product.color &&
+          item.size === product.size
       );
 
       if (existing) {
         return prev.map((item) =>
           item.id === product.id &&
-          item.color === product.color
+          item.color === product.color &&
+          item.size === product.size
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -69,12 +77,17 @@ export function CartProvider({
     });
   };
 
-  const removeFromCart = (id: number, color?: string | null) => {
+  const removeFromCart = (
+    id: number,
+    color?: string | null,
+    size?: string | null
+  ) => {
     setCart((prev) =>
       prev.filter(
         (item) =>
           item.id !== id ||
-          (color !== undefined && item.color !== color)
+          (color !== undefined && item.color !== color) ||
+          (size !== undefined && item.size !== size)
       )
     );
   };

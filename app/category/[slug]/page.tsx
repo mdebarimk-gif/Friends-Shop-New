@@ -72,6 +72,7 @@ export default function CategoryPage({
       tag: product.tag || null,
       price: product.price,
       color: null,
+      size: null,
     });
 
     alert('✅ পণ্যটি কার্টে যোগ হয়েছে!');
@@ -85,6 +86,7 @@ export default function CategoryPage({
       tag: product.tag || null,
       price: product.price,
       color: null,
+      size: null,
     });
 
     window.location.href = '/checkout';

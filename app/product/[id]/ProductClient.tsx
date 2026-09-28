@@ -18,6 +18,7 @@ type Product = {
   image_urls: string[] | null;
   video_url: string | null;
   colors: string[] | null;
+  sizes: string[] | null;
 };
 
 export default function ProductDetails() {
@@ -34,6 +35,7 @@ export default function ProductDetails() {
   const [added, setAdded] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -194,6 +196,11 @@ export default function ProductDetails() {
       return;
     }
 
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      alert('📏 আগে একটি Size নির্বাচন করুন।');
+      return;
+    }
+
     for (let i = 0; i < quantity; i++) {
       addToCart({
         id: product.id,
@@ -202,6 +209,7 @@ export default function ProductDetails() {
         image: product.image_url || '',
         tag: product.tag || null,
         color: selectedColor || null,
+        size: selectedSize || null,
       });
     }
 
@@ -227,8 +235,8 @@ export default function ProductDetails() {
       return;
     }
 
-    if (product.colors && product.colors.length > 0 && !selectedColor) {
-      alert('🎨 আগে একটি Color নির্বাচন করুন।');
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      alert('📏 আগে একটি Size নির্বাচন করুন।');
       return;
     }
 
@@ -240,6 +248,7 @@ export default function ProductDetails() {
         image: product.image_url || '',
         tag: product.tag || null,
         color: selectedColor || null,
+        size: selectedSize || null,
       });
     }
 
@@ -582,6 +591,66 @@ export default function ProductDetails() {
                 }}
               >
                 {color}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* =========================
+          SIZE
+      ========================= */}
+
+      {product.sizes && product.sizes.length > 0 && (
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '14px',
+            borderRadius: '12px',
+            boxShadow: '0 1px 5px rgba(0,0,0,0.05)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '14px',
+              fontWeight: '800',
+              color: '#212121',
+              marginBottom: '9px',
+            }}
+          >
+            Size: {selectedSize || 'Select Size'}
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px',
+            }}
+          >
+            {product.sizes.map((size) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => setSelectedSize(size)}
+                style={{
+                  border:
+                    selectedSize === size
+                      ? '2px solid #ff4600'
+                      : '1px solid #dddddd',
+                  backgroundColor:
+                    selectedSize === size
+                      ? '#fff3ed'
+                      : '#ffffff',
+                  color: '#212121',
+                  padding: '7px 13px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                }}
+              >
+                {size}
               </button>
             ))}
           </div>

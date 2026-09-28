@@ -29,13 +29,13 @@ export default function ShoppingCart() {
     if (!item) return;
 
     if (item.quantity <= 1) {
-      removeFromCart(id, item.color);
+      removeFromCart(id, item.color, item.size);
       return;
     }
 
     // CartContext-এ সরাসরি quantity কমানোর function নেই.
     // তাই একটি item remove করে বাকি quantity আবার যোগ করা হচ্ছে।
-    removeFromCart(id, item.color);
+    removeFromCart(id, item.color, item.size);
 
     for (let i = 0; i < item.quantity - 1; i++) {
       addToCart({
@@ -45,6 +45,7 @@ export default function ShoppingCart() {
         image: item.image,
         tag: item.tag || null,
         color: item.color || null,
+        size: item.size || null,
       });
     }
   };
@@ -61,6 +62,7 @@ export default function ShoppingCart() {
       image: item.image,
       tag: item.tag || null,
       color: item.color || null,
+      size: item.size || null,
     });
   };
 
@@ -141,7 +143,7 @@ export default function ShoppingCart() {
           >
             {cart.map((item) => (
               <div
-                key={item.id}
+                key={`${item.id}-${item.color ?? 'no-color'}-${item.size ?? 'no-size'}`}
                 style={{
                   backgroundColor: '#ffffff',
                   borderRadius: '10px',
@@ -216,6 +218,18 @@ export default function ShoppingCart() {
                     </div>
                   )}
 
+                  {item.size && (
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        color: '#666',
+                        fontWeight: '600',
+                      }}
+                    >
+                      📏 Size: {item.size}
+                    </div>
+                  )}
+
                   <div
                     style={{
                       display: 'flex',
@@ -287,7 +301,7 @@ export default function ShoppingCart() {
                 </div>
 
                 <button
-                  onClick={() => removeFromCart(item.id, item.color)}
+                  onClick={() => removeFromCart(item.id, item.color, item.size)}
                   aria-label="Remove product"
                   style={{
                     position: 'absolute',
