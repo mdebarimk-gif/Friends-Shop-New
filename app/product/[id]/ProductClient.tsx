@@ -254,13 +254,14 @@ export default function ProductDetails() {
         {/* Main Image */}
         <div
           style={{
-            minHeight: '280px',
+            minHeight: '300px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#fafafa',
-            borderRadius: '8px',
+            borderRadius: '14px',
             overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
           }}
         >
           {selectedImage ? (
@@ -270,9 +271,9 @@ export default function ProductDetails() {
               style={{
                 width: '100%',
                 maxWidth: '420px',
-                height: '280px',
+                height: '300px',
                 objectFit: 'contain',
-                borderRadius: '8px',
+                borderRadius: '14px',
               }}
             />
           ) : (
@@ -306,10 +307,10 @@ export default function ProductDetails() {
           <div
             style={{
               display: 'flex',
-              gap: '8px',
+              gap: '9px',
               overflowX: 'auto',
-              paddingTop: '10px',
-              paddingBottom: '3px',
+              paddingTop: '12px',
+              paddingBottom: '4px',
             }}
           >
             {productImages.map((image, index) => (
@@ -319,14 +320,14 @@ export default function ProductDetails() {
                 onClick={() => setSelectedImage(image)}
                 style={{
                   flexShrink: 0,
-                  width: '68px',
-                  height: '68px',
+                  width: '72px',
+                  height: '72px',
                   padding: '2px',
                   border:
                     selectedImage === image
                       ? '2px solid #ff4600'
                       : '1px solid #ddd',
-                  borderRadius: '7px',
+                  borderRadius: '9px',
                   backgroundColor: '#fff',
                   cursor: 'pointer',
                   overflow: 'hidden',
@@ -423,6 +424,7 @@ export default function ProductDetails() {
                     fontSize: '14px',
                     color: '#9e9e9e',
                     textDecoration: 'line-through',
+                    fontWeight: '500',
                   }}
                 >
                   ৳{product.old_price}
@@ -430,12 +432,12 @@ export default function ProductDetails() {
 
                 <span
                   style={{
-                    fontSize: '12px',
-                    color: '#ff4600',
-                    fontWeight: 'bold',
+                    fontSize: '11px',
+                    color: '#d84315',
+                    fontWeight: '800',
                     backgroundColor: '#fff0e6',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
+                    padding: '4px 7px',
+                    borderRadius: '6px',
                   }}
                 >
                   -{discount}% OFF
@@ -446,11 +448,12 @@ export default function ProductDetails() {
 
         <h1
           style={{
-            fontSize: '17px',
-            fontWeight: '600',
+            fontSize: '18px',
+            fontWeight: '700',
             color: '#212121',
             margin: 0,
-            lineHeight: '1.5',
+            lineHeight: '1.45',
+            letterSpacing: '-0.1px',
           }}
         >
           {product.title}
@@ -460,12 +463,12 @@ export default function ProductDetails() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             fontSize: '12px',
             color: '#757575',
-            borderTop: '1px solid #f5f5f5',
-            paddingTop: '8px',
-            marginTop: '4px',
+            borderTop: '1px solid #eeeeee',
+            paddingTop: '10px',
+            marginTop: '3px',
             flexWrap: 'wrap',
           }}
         >
@@ -538,8 +541,9 @@ export default function ProductDetails() {
             display: 'flex',
             alignItems: 'center',
             border: '1px solid #e0e0e0',
-            borderRadius: '6px',
+            borderRadius: '9px',
             overflow: 'hidden',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
           }}
         >
           <button
@@ -549,10 +553,11 @@ export default function ProductDetails() {
             style={{
               border: 'none',
               backgroundColor: '#f5f5f5',
-              padding: '6px 14px',
-              fontSize: '16px',
-              fontWeight: 'bold',
+              padding: '8px 15px',
+              fontSize: '17px',
+              fontWeight: '800',
               cursor: 'pointer',
+              minWidth: '42px',
             }}
           >
             −
@@ -560,9 +565,11 @@ export default function ProductDetails() {
 
           <span
             style={{
-              padding: '0 16px',
-              fontSize: '14px',
-              fontWeight: 'bold',
+              padding: '0 17px',
+              fontSize: '15px',
+              fontWeight: '800',
+              minWidth: '42px',
+              textAlign: 'center',
               color: '#212121',
             }}
           >
@@ -603,16 +610,18 @@ export default function ProductDetails() {
       <div
         style={{
           backgroundColor: '#ffffff',
-          padding: '14px',
+          padding: '16px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '8px',
+          gap: '10px',
+          borderRadius: '14px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
         }}
       >
         <h2
           style={{
-            fontSize: '14px',
-            fontWeight: '700',
+            fontSize: '15px',
+            fontWeight: '800',
             margin: 0,
             color: '#212121',
           }}
@@ -622,10 +631,10 @@ export default function ProductDetails() {
 
         <p
           style={{
-            fontSize: '12px',
+            fontSize: '13px',
             color: '#424242',
             margin: 0,
-            lineHeight: '1.7',
+            lineHeight: '1.75',
             textAlign: 'justify',
             whiteSpace: 'pre-wrap',
           }}
@@ -658,15 +667,15 @@ export default function ProductDetails() {
           bottom: '60px',
           left: 0,
           zIndex: 100,
-          minHeight: '60px',
+          minHeight: '68px',
           width: '100%',
           backgroundColor: '#ffffff',
-          borderTop: '1px solid #e0e0e0',
-          padding: '8px 12px',
+          borderTop: '1px solid #eeeeee',
+          padding: '10px 12px',
           boxSizing: 'border-box',
           display: 'flex',
           gap: '8px',
-          boxShadow: '0 -4px 12px rgba(0,0,0,0.08)',
+          boxShadow: '0 -4px 14px rgba(0,0,0,0.09)',
         }}
       >
         {/* CHAT / WHATSAPP */}
@@ -715,9 +724,11 @@ export default function ProductDetails() {
                 : '#ff5500',
             color: '#ffffff',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '10px',
             fontSize: '14px',
-            fontWeight: 'bold',
+            fontWeight: '800',
+            minHeight: '48px',
+            boxShadow: '0 2px 6px rgba(255,85,0,0.16)',
             cursor:
               product.stock > 0
                 ? 'pointer'
@@ -742,9 +753,11 @@ export default function ProductDetails() {
               product.stock > 0 ? '#ff1447' : '#999',
             color: '#ffffff',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '10px',
             fontSize: '14px',
-            fontWeight: 'bold',
+            fontWeight: '800',
+            minHeight: '48px',
+            boxShadow: '0 2px 6px rgba(255,20,71,0.16)',
             cursor:
               product.stock > 0
                 ? 'pointer'
