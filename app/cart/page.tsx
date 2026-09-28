@@ -29,13 +29,13 @@ export default function ShoppingCart() {
     if (!item) return;
 
     if (item.quantity <= 1) {
-      removeFromCart(id);
+      removeFromCart(id, item.color);
       return;
     }
 
-    // CartContext-এ সরাসরি quantity কমানোর function নেই।
+    // CartContext-এ সরাসরি quantity কমানোর function নেই.
     // তাই একটি item remove করে বাকি quantity আবার যোগ করা হচ্ছে।
-    removeFromCart(id);
+    removeFromCart(id, item.color);
 
     for (let i = 0; i < item.quantity - 1; i++) {
       addToCart({
@@ -44,6 +44,7 @@ export default function ShoppingCart() {
         price: item.price,
         image: item.image,
         tag: item.tag || null,
+        color: item.color || null,
       });
     }
   };
@@ -58,7 +59,8 @@ export default function ShoppingCart() {
       name: item.name,
       price: item.price,
       image: item.image,
-        tag: item.tag || null,
+      tag: item.tag || null,
+      color: item.color || null,
     });
   };
 
@@ -202,6 +204,18 @@ export default function ShoppingCart() {
                     {item.name}
                   </h3>
 
+                  {item.color && (
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        color: '#666',
+                        fontWeight: '600',
+                      }}
+                    >
+                      🎨 Color: {item.color}
+                    </div>
+                  )}
+
                   <div
                     style={{
                       display: 'flex',
@@ -273,7 +287,7 @@ export default function ShoppingCart() {
                 </div>
 
                 <button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item.id, item.color)}
                   aria-label="Remove product"
                   style={{
                     position: 'absolute',

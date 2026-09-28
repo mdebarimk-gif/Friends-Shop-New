@@ -11,6 +11,7 @@ export default function AddProduct() {
     category: 'fashion',
     stock: '',
     tag: 'Free Shipping 🚚',
+    colors: '',
     description: '',
   });
 
@@ -244,6 +245,14 @@ export default function AddProduct() {
           tag: productData.tag,
           description: productData.description,
 
+          // Product Colors
+          colors: productData.colors
+            ? productData.colors
+                .split(',')
+                .map((color) => color.trim())
+                .filter(Boolean)
+            : [],
+
           // প্রথম ছবি
           image_url: mainImageUrl,
 
@@ -285,6 +294,7 @@ export default function AddProduct() {
         category: 'fashion',
         stock: '',
         tag: 'Free Shipping 🚚',
+        colors: '',
         description: '',
       });
 
@@ -500,6 +510,32 @@ export default function AddProduct() {
             required
             style={inputStyle}
           />
+        </label>
+
+        {/* Colors */}
+        <label style={labelStyle}>
+          পণ্যের রং
+          <input
+            type="text"
+            value={productData.colors}
+            onChange={(e) =>
+              setProductData({
+                ...productData,
+                colors: e.target.value,
+              })
+            }
+            placeholder="যেমন: Black, White, Red, Blue"
+            style={inputStyle}
+          />
+          <div
+            style={{
+              marginTop: '5px',
+              fontSize: '11px',
+              color: '#777',
+            }}
+          >
+            একাধিক রং দিতে কমা (,) ব্যবহার করুন।
+          </div>
         </label>
 
         {/* Tag */}

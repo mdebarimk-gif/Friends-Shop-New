@@ -8,13 +8,14 @@ type CartItem = {
   price: number;
   image: string;
   tag: string | null;
+  color: string | null;
   quantity: number;
 };
 
 type CartContextType = {
   cart: CartItem[];
   addToCart: (product: Omit<CartItem, "quantity">) => void;
-  removeFromCart: (id: number) => void;
+  removeFromCart: (id: number, color?: string | null) => void;
   clearCart: () => void;
 };
 
@@ -37,6 +38,7 @@ export function CartProvider({
         parsedCart.map((item: any) => ({
           ...item,
           tag: item.tag ?? null,
+          color: item.color ?? null,
         }))
       );
     }
@@ -48,11 +50,16 @@ export function CartProvider({
 
   const addToCart = (product: Omit<CartItem, "quantity">) => {
     setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
+      const existing = prev.find(
+        (item) =>
+          item.id === product.id &&
+          item.color === product.color
+      );
 
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id
+          item.id === product.id &&
+          item.color === product.color
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -62,8 +69,14 @@ export function CartProvider({
     });
   };
 
-  const removeFromCart = (id: number) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (id: number, color?: string | null) => {
+    setCart((prev) =>
+      prev.filter(
+        (item) =>
+          item.id !== id ||
+          (color !== undefined && item.color !== color)
+      )
+    );
   };
 
   const clearCart = () => {
