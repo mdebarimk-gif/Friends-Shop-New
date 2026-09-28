@@ -335,19 +335,19 @@ const divisionDistricts: Record<string, string[]> = {
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
-        backgroundColor: '#f4f4f4',
+        backgroundColor: '#f5f5f5',
         minHeight: '100vh',
-        padding: '12px',
-        paddingBottom: '145px',
+        padding: '14px',
+        paddingBottom: '155px',
         boxSizing: 'border-box',
         width: '100%',
       }}
     >
       <h1
         style={{
-          fontSize: '18px',
+          fontSize: '20px',
           fontWeight: '800',
-          margin: '4px 0',
+          margin: '4px 0 10px',
           color: '#212121',
         }}
       >
@@ -386,9 +386,9 @@ const divisionDistricts: Record<string, string[]> = {
           >
             <div
               style={{
-                width: '55px',
-                height: '55px',
-                borderRadius: '7px',
+                width: '64px',
+                height: '64px',
+                borderRadius: '9px',
                 overflow: 'hidden',
                 backgroundColor: '#f8f8f8',
                 flexShrink: 0,
@@ -423,8 +423,8 @@ const divisionDistricts: Record<string, string[]> = {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div
                 style={{
-                  fontSize: '13px',
-                  fontWeight: '600',
+                  fontSize: '14px',
+                  fontWeight: '700',
                   color: '#212121',
                 }}
               >
@@ -467,19 +467,19 @@ const divisionDistricts: Record<string, string[]> = {
         <div
           style={{
             backgroundColor: '#ffffff',
-            borderRadius: '10px',
-            padding: '14px',
+            borderRadius: '14px',
+            padding: '16px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+            gap: '11px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
           }}
         >
           <h2
             style={{
-              fontSize: '14px',
-              fontWeight: '700',
-              margin: '0 0 4px',
+              fontSize: '15px',
+              fontWeight: '800',
+              margin: '0 0 5px',
             }}
           >
             ডেলিভারি ঠিকানা
@@ -497,11 +497,13 @@ const divisionDistricts: Record<string, string[]> = {
               })
             }
             style={{
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #e0e0e0',
-              fontSize: '13px',
+              padding: '12px',
+              borderRadius: '9px',
+              border: '1px solid #dddddd',
+              fontSize: '14px',
               outline: 'none',
+              boxSizing: 'border-box',
+              width: '100%',
             }}
           />
 
@@ -517,11 +519,13 @@ const divisionDistricts: Record<string, string[]> = {
               })
             }
             style={{
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #e0e0e0',
-              fontSize: '13px',
+              padding: '12px',
+              borderRadius: '9px',
+              border: '1px solid #dddddd',
+              fontSize: '14px',
               outline: 'none',
+              boxSizing: 'border-box',
+              width: '100%',
             }}
           />
 
@@ -592,10 +596,10 @@ const divisionDistricts: Record<string, string[]> = {
                 })
               }
               style={{
-                padding: '10px',
-                borderRadius: '6px',
-                border: '1px solid #e0e0e0',
-                fontSize: '13px',
+                padding: '12px',
+                borderRadius: '9px',
+                border: '1px solid #dddddd',
+                fontSize: '14px',
                 backgroundColor: '#ffffff',
               }}
             >
@@ -689,9 +693,12 @@ const divisionDistricts: Record<string, string[]> = {
                 paymentMethod === 'cod'
                   ? '1px solid #ff4600'
                   : '1px solid #e0e0e0',
-              borderRadius: '8px',
+              borderRadius: '10px',
               backgroundColor:
                 paymentMethod === 'cod' ? '#fff0e6' : '#ffffff',
+              boxShadow: paymentMethod === 'cod'
+                ? '0 2px 6px rgba(255,70,0,0.08)'
+                : 'none',
               cursor: 'pointer',
             }}
           >
@@ -740,9 +747,12 @@ const divisionDistricts: Record<string, string[]> = {
                 paymentMethod === 'bkash'
                   ? '1px solid #e2136e'
                   : '1px solid #e0e0e0',
-              borderRadius: '8px',
+              borderRadius: '10px',
               backgroundColor:
                 paymentMethod === 'bkash' ? '#fff0f6' : '#ffffff',
+              boxShadow: paymentMethod === 'bkash'
+                ? '0 2px 6px rgba(226,19,110,0.10)'
+                : 'none',
             }}
           >
             <input
@@ -756,8 +766,8 @@ const divisionDistricts: Record<string, string[]> = {
             <div style={{ flex: 1 }}>
               <div
                 style={{
-                  fontSize: '13px',
-                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  fontWeight: '800',
                 }}
               >
                 🟣 bKash Personal
@@ -797,9 +807,12 @@ const divisionDistricts: Record<string, string[]> = {
                 paymentMethod === 'nagad'
                   ? '1px solid #f58220'
                   : '1px solid #e0e0e0',
-              borderRadius: '8px',
+              borderRadius: '10px',
               backgroundColor:
                 paymentMethod === 'nagad' ? '#fff7ed' : '#ffffff',
+              boxShadow: paymentMethod === 'nagad'
+                ? '0 2px 6px rgba(245,130,32,0.10)'
+                : 'none',
             }}
           >
             <input
@@ -813,8 +826,8 @@ const divisionDistricts: Record<string, string[]> = {
             <div style={{ flex: 1 }}>
               <div
                 style={{
-                  fontSize: '13px',
-                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  fontWeight: '800',
                 }}
               >
                 🟢 Nagad Personal
@@ -854,9 +867,12 @@ const divisionDistricts: Record<string, string[]> = {
                 paymentMethod === 'bank'
                   ? '1px solid #1976d2'
                   : '1px solid #e0e0e0',
-              borderRadius: '8px',
+              borderRadius: '10px',
               backgroundColor:
                 paymentMethod === 'bank' ? '#eef6ff' : '#ffffff',
+              boxShadow: paymentMethod === 'bank'
+                ? '0 2px 6px rgba(25,118,210,0.10)'
+                : 'none',
             }}
           >
             <input
@@ -870,8 +886,8 @@ const divisionDistricts: Record<string, string[]> = {
             <div style={{ flex: 1 }}>
               <div
                 style={{
-                  fontSize: '13px',
-                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  fontWeight: '800',
                 }}
               >
                 🏦 Bank Payment
@@ -1051,7 +1067,7 @@ const divisionDistricts: Record<string, string[]> = {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            boxShadow: '0 -4px 10px rgba(0,0,0,0.06)',
+            boxShadow: '0 -4px 14px rgba(0,0,0,0.08)',
           }}
         >
           <div>
