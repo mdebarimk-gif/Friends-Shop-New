@@ -333,16 +333,6 @@ export default function ShoppingCart() {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                fontSize: '15px',
-                fontWeight: '700',
-                color: '#212121',
-                paddingTop: '4px',
-              }}
-            >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
                 fontSize: '13px',
                 color: '#757575',
               }}
@@ -358,9 +348,21 @@ export default function ShoppingCart() {
               </span>
             </div>
 
-              <span>Product Total</span>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '17px',
+                fontWeight: '800',
+                color: '#212121',
+                marginTop: '4px',
+                paddingTop: '10px',
+                borderTop: '1px solid #eeeeee',
+              }}
+            >
+              <span>Total Payable</span>
               <span style={{ color: '#ff4600' }}>
-                ৳{subtotal}
+                ৳{total}
               </span>
             </div>
           </div>
