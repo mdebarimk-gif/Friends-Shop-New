@@ -568,6 +568,32 @@ const divisionDistricts: Record<string, string[]> = {
                 {item.name}
               </div>
 
+              {item.color && (
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: '#666',
+                    fontWeight: '600',
+                    marginTop: '3px',
+                  }}
+                >
+                  🎨 Color: {item.color}
+                </div>
+              )}
+
+              {item.size && (
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: '#666',
+                    fontWeight: '600',
+                    marginTop: '2px',
+                  }}
+                >
+                  📏 Size: {item.size}
+                </div>
+              )}
+
               <div
                 style={{
                   fontSize: '11px',
