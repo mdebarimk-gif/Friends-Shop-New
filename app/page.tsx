@@ -73,7 +73,7 @@ export default function Home() {
   };
 
   const handleCopyProductLink = async (product: Product) => {
-    const productUrl = `${window.location.origin}/product/${product.id}`;
+    const productUrl = `https://friends-shop-new-y91j-plum.vercel.app/product/${product.id}`;
 
     try {
       await navigator.clipboard.writeText(productUrl);
