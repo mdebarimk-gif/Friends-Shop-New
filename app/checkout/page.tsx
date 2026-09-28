@@ -64,6 +64,11 @@ const divisionDistricts: Record<string, string[]> = {
 
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [transactionId, setTransactionId] = useState('');
+  const [voucherCode, setVoucherCode] = useState('');
+  const [voucherMessage, setVoucherMessage] = useState('');
+  const [voucherId, setVoucherId] = useState<number | null>(null);
+  const [discount, setDiscount] = useState(0);
+  const [isVoucherApplied, setIsVoucherApplied] = useState(false);
   const [isOrdered, setIsOrdered] = useState(false);
 
   const subtotal = cart.reduce(
@@ -86,7 +91,121 @@ const divisionDistricts: Record<string, string[]> = {
           ? 60
           : 120;
 
-  const total = subtotal + deliveryFee;
+  const total = Math.max(0, subtotal + deliveryFee - discount);
+
+  const applyVoucher = async () => {
+    const code = voucherCode.trim().toUpperCase();
+
+    if (!code) {
+      setVoucherMessage('❌ আগে Voucher Code লিখুন।');
+      setDiscount(0);
+      setVoucherId(null);
+      setIsVoucherApplied(false);
+      return;
+    }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setVoucherMessage('❌ Voucher ব্যবহার করতে আগে Login করুন।');
+      return;
+    }
+
+    const { data: voucher, error: voucherError } = await supabase
+      .from('vouchers')
+      .select('*')
+      .eq('code', code)
+      .single();
+
+    if (voucherError || !voucher) {
+      setVoucherMessage('❌ এই Voucher Code সঠিক নয়।');
+      setDiscount(0);
+      setVoucherId(null);
+      setIsVoucherApplied(false);
+      return;
+    }
+
+    if (!voucher.active) {
+      setVoucherMessage('❌ এই Voucher বর্তমানে Active নেই।');
+      setDiscount(0);
+      setVoucherId(null);
+      setIsVoucherApplied(false);
+      return;
+    }
+
+    if (
+      voucher.expires_at &&
+      new Date(voucher.expires_at).getTime() <= Date.now()
+    ) {
+      setVoucherMessage('❌ এই Voucher-এর মেয়াদ শেষ হয়ে গেছে।');
+      setDiscount(0);
+      setVoucherId(null);
+      setIsVoucherApplied(false);
+      return;
+    }
+
+    if (subtotal < Number(voucher.min_order_amount || 0)) {
+      setVoucherMessage(
+        `❌ এই Voucher ব্যবহার করতে কমপক্ষে ৳${Number(
+          voucher.min_order_amount || 0
+        )} টাকার অর্ডার প্রয়োজন।`
+      );
+      setDiscount(0);
+      setVoucherId(null);
+      setIsVoucherApplied(false);
+      return;
+    }
+
+    const { data: collectedVoucher } = await supabase
+      .from('user_vouchers')
+      .select('id, used')
+      .eq('user_id', user.id)
+      .eq('voucher_id', voucher.id)
+      .maybeSingle();
+
+    if (!collectedVoucher) {
+      setVoucherMessage('❌ আগে এই Voucher Collect করুন।');
+      setDiscount(0);
+      setVoucherId(null);
+      setIsVoucherApplied(false);
+      return;
+    }
+
+    if (collectedVoucher.used) {
+      setVoucherMessage('❌ এই Voucher আপনি আগে ব্যবহার করেছেন।');
+      setDiscount(0);
+      setVoucherId(null);
+      setIsVoucherApplied(false);
+      return;
+    }
+
+    let calculatedDiscount = 0;
+
+    if (voucher.discount_type === 'percent') {
+      calculatedDiscount =
+        (subtotal * Number(voucher.discount_value)) / 100;
+    } else {
+      calculatedDiscount = Number(voucher.discount_value);
+    }
+
+    if (voucher.max_discount !== null) {
+      calculatedDiscount = Math.min(
+        calculatedDiscount,
+        Number(voucher.max_discount)
+      );
+    }
+
+    calculatedDiscount = Math.min(calculatedDiscount, subtotal);
+
+    setDiscount(calculatedDiscount);
+    setVoucherId(voucher.id);
+    setIsVoucherApplied(true);
+    setVoucherMessage(
+      `✅ Voucher applied! আপনি ৳${calculatedDiscount} Discount পেয়েছেন।`
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,6 +250,8 @@ const divisionDistricts: Record<string, string[]> = {
           items: cart,
           subtotal: subtotal,
           delivery_fee: deliveryFee,
+          discount: discount,
+          voucher_code: isVoucherApplied ? voucherCode.trim().toUpperCase() : null,
           total: total,
           payment_method: paymentMethod,
           transaction_id:
@@ -148,6 +269,22 @@ const divisionDistricts: Record<string, string[]> = {
         console.error('Order error:', error);
         alert('অর্ডার সংরক্ষণ করা যায়নি: ' + error.message);
         return;
+      }
+
+      if (isVoucherApplied && voucherId) {
+        const { error: voucherUpdateError } = await supabase
+          .from('user_vouchers')
+          .update({ used: true })
+          .eq('user_id', user.id)
+          .eq('voucher_id', voucherId)
+          .eq('used', false);
+
+        if (voucherUpdateError) {
+          console.error(
+            'Voucher usage update error:',
+            voucherUpdateError
+          );
+        }
       }
 
       setIsOrdered(true);
@@ -681,6 +818,88 @@ const divisionDistricts: Record<string, string[]> = {
             পেমেন্ট পদ্ধতি
           </h2>
 
+          {/* VOUCHER */}
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              padding: '16px',
+              borderRadius: '14px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+              marginBottom: '12px',
+            }}
+          >
+            <h2
+              style={{
+                margin: '0 0 10px',
+                fontSize: '15px',
+                fontWeight: '800',
+                color: '#212121',
+              }}
+            >
+              🎟️ Voucher Code
+            </h2>
+
+            <div
+              style={{
+                display: 'flex',
+                gap: '8px',
+              }}
+            >
+              <input
+                type="text"
+                value={voucherCode}
+                onChange={(e) => {
+                  setVoucherCode(e.target.value.toUpperCase());
+                  setVoucherMessage('');
+                }}
+                placeholder="Voucher Code লিখুন"
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  padding: '12px',
+                  borderRadius: '9px',
+                  border: '1px solid #dddddd',
+                  fontSize: '13px',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={applyVoucher}
+                style={{
+                  border: 'none',
+                  backgroundColor: '#7b1fa2',
+                  color: '#ffffff',
+                  padding: '0 16px',
+                  borderRadius: '9px',
+                  fontSize: '13px',
+                  fontWeight: '800',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                Apply
+              </button>
+            </div>
+
+            {voucherMessage && (
+              <div
+                style={{
+                  marginTop: '8px',
+                  fontSize: '12px',
+                  color: voucherMessage.startsWith('❌')
+                    ? '#d32f2f'
+                    : '#757575',
+                  fontWeight: '700',
+                }}
+              >
+                {voucherMessage}
+              </div>
+            )}
+          </div>
+
           {/* CASH ON DELIVERY */}
           <label
             style={{
@@ -1028,6 +1247,22 @@ const divisionDistricts: Record<string, string[]> = {
               marginTop: '6px',
             }}
           >
+          {isVoucherApplied && discount > 0 && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '13px',
+                color: '#2e7d32',
+                fontWeight: '700',
+                marginTop: '6px',
+              }}
+            >
+              <span>Voucher Discount</span>
+              <span>-৳{discount}</span>
+            </div>
+          )}
+
             <span>Delivery Fee</span>
             <span>৳{deliveryFee}</span>
           </div>

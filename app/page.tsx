@@ -108,7 +108,72 @@ export default function Home() {
           </div>
         </div>
 
-        <button className="collect-button">
+        <button
+          className="collect-button"
+          onClick={async () => {
+            const {
+              data: { user },
+            } = await supabase.auth.getUser();
+
+            if (!user) {
+              alert('🎟️ Voucher নিতে আগে Customer Account তৈরি করুন বা Login করুন।');
+              window.location.href = '/login';
+              return;
+            }
+
+            const { data: voucher, error: voucherError } = await supabase
+              .from('vouchers')
+              .select('id, active, expires_at')
+              .eq('code', 'FRIENDS40')
+              .single();
+
+            if (voucherError || !voucher) {
+              alert('❌ Voucher পাওয়া যায়নি।');
+              return;
+            }
+
+            if (!voucher.active) {
+              alert('❌ এই Voucher বর্তমানে Active নেই।');
+              return;
+            }
+
+            if (
+              voucher.expires_at &&
+              new Date(voucher.expires_at).getTime() <= Date.now()
+            ) {
+              alert('❌ এই Voucher-এর মেয়াদ শেষ হয়ে গেছে।');
+              return;
+            }
+
+            const { data: existing } = await supabase
+              .from('user_vouchers')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('voucher_id', voucher.id)
+              .maybeSingle();
+
+            if (existing) {
+              alert('🎟️ এই Voucher আপনি আগেই Collect করেছেন।');
+              return;
+            }
+
+            const { error: collectError } = await supabase
+              .from('user_vouchers')
+              .insert({
+                user_id: user.id,
+                voucher_id: voucher.id,
+                used: false,
+              });
+
+            if (collectError) {
+              console.error('Voucher collect error:', collectError);
+              alert('❌ Voucher Collect করা যায়নি। আবার চেষ্টা করুন।');
+              return;
+            }
+
+            alert('🎉 Voucher সফলভাবে Collect হয়েছে!');
+          }}
+        >
           Collect
         </button>
       </div>
