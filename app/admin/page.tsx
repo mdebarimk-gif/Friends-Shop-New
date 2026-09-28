@@ -209,6 +209,22 @@ export default function AdminDashboard() {
         >
           🏠 View Shop
         </a>
+
+        <a
+          href="/admin/vouchers"
+          style={{
+            backgroundColor: '#7b1fa2',
+            color: '#ffffff',
+            textDecoration: 'none',
+            textAlign: 'center',
+            padding: '14px 8px',
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontWeight: '700',
+          }}
+        >
+          🎟️ Manage Vouchers
+        </a>
       </div>
 
       {message && (
