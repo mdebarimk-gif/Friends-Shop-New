@@ -496,12 +496,14 @@ export default function ProductDetails() {
             style={{
               display: 'inline-block',
               width: 'fit-content',
-              backgroundColor: '#fff0e6',
-              color: '#ff4600',
-              padding: '5px 8px',
-              borderRadius: '5px',
+              backgroundColor: '#e8f8ee',
+              color: '#16823b',
+              border: '1px solid #b7e4c7',
+              padding: '5px 10px',
+              borderRadius: '999px',
               fontSize: '11px',
               fontWeight: '700',
+              lineHeight: '1.2',
             }}
           >
             {product.tag}

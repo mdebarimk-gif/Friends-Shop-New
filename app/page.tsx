@@ -578,11 +578,14 @@ export default function Home() {
           display: inline-block;
           max-width: 100%;
           margin-top: 6px;
-          background: #fff0e6;
-          color: #ff4600;
+          background: #e8f8ee;
+          color: #16823b;
+          border: 1px solid #b7e4c7;
           font-size: 9px;
           font-weight: 700;
-          padding: 3px 5px;
+          padding: 4px 8px;
+          border-radius: 999px;
+          line-height: 1.2;
           border-radius: 3px;
           overflow: hidden;
           text-overflow: ellipsis;

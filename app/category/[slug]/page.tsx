@@ -287,10 +287,16 @@ export default function CategoryPage({
                 {product.tag && (
                   <div
                     style={{
+                      display: 'inline-block',
                       fontSize: '10px',
-                      color: '#ff4600',
+                      color: '#16823b',
+                      backgroundColor: '#e8f8ee',
+                      border: '1px solid #b7e4c7',
                       fontWeight: '700',
-                      marginBottom: '4px',
+                      padding: '4px 8px',
+                      borderRadius: '999px',
+                      lineHeight: '1.2',
+                      marginBottom: '6px',
                     }}
                   >
                     {product.tag}
