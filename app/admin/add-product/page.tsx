@@ -38,9 +38,7 @@ export default function AddProduct() {
       const { data: userData, error: userError } =
         await supabase.auth.getUser();
 
-      console.log('🔐 SESSION USER ID:', data.session.user.id);
       console.log('📧 SESSION EMAIL:', data.session.user.email);
-      console.log('👤 GET USER ID:', userData.user?.id);
       console.log('📧 GET USER EMAIL:', userData.user?.email);
       console.log('❌ GET USER ERROR:', userError);
 

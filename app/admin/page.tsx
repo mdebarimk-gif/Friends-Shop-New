@@ -115,18 +115,25 @@ export default function AdminDashboard() {
 
     if (!confirmed) return;
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('products')
       .delete()
-      .eq('id', product.id);
+      .eq('id', product.id)
+      .select('id');
 
     if (error) {
-      console.error(error);
+      console.error('Delete error:', error);
       setMessage(`❌ Delete হয়নি: ${error.message}`);
       return;
     }
 
-    setMessage('✅ পণ্য Delete হয়েছে।');
+    if (!data || data.length === 0) {
+      console.error('Delete returned no rows:', data);
+      setMessage('❌ পণ্য Delete হয়নি। Admin permission/RLS পরীক্ষা করুন।');
+      return;
+    }
+
+    setMessage('✅ পণ্য সত্যিই Delete হয়েছে।');
 
     await loadProducts();
   };
@@ -140,6 +147,8 @@ export default function AdminDashboard() {
         boxSizing: 'border-box',
       }}
     >
+
+
       <div
         style={{
           backgroundColor: '#ffffff',
