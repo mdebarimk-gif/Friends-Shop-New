@@ -27,15 +27,27 @@ export default function AddProduct() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data, error } = await supabase.auth.getSession();
 
-      if (!data.session) {
+      if (error || !data.session) {
+        setMessage('❌ লগইন করা নেই।');
         window.location.href = '/login';
         return;
       }
 
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
+
+      console.log('🔐 SESSION USER ID:', data.session.user.id);
+      console.log('📧 SESSION EMAIL:', data.session.user.email);
+      console.log('👤 GET USER ID:', userData.user?.id);
+      console.log('📧 GET USER EMAIL:', userData.user?.email);
+      console.log('❌ GET USER ERROR:', userError);
+
       setMessage(
-        `🔐 Admin User ID: ${data.session.user.id} | Email: ${data.session.user.email || 'N/A'}`
+        `🔐 User ID: ${data.session.user.id} | Email: ${
+          data.session.user.email || 'N/A'
+        }`
       );
 
       setCheckingAuth(false);
