@@ -144,6 +144,25 @@ export default function AddProduct() {
     const uploadedFilePaths: string[] = [];
 
     try {
+      // বর্তমান Supabase login session নিশ্চিত করা
+      const { data: authData, error: authError } =
+        await supabase.auth.getUser();
+
+      if (authError || !authData.user) {
+        setMessage('❌ Admin login পাওয়া যাচ্ছে না। আবার লগইন করুন।');
+        setSaving(false);
+        return;
+      }
+
+      console.log('🔐 Product submit user:', authData.user.id);
+      console.log('📧 Product submit email:', authData.user.email);
+
+      // Admin account নিশ্চিত করা
+      if (authData.user.id !== 'a5e0973b-b8a0-4891-8353-53e130fe51bc') {
+        setMessage('❌ এই account থেকে পণ্য যোগ করার অনুমতি নেই।');
+        setSaving(false);
+        return;
+      }
       const imageUrls: string[] = [];
       let videoUrl = '';
 
