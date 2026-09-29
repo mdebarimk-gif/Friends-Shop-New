@@ -33,6 +33,23 @@ export default function Home() {
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const heroBanners = [
+    '/hero-banner.png',
+    '/friends-banner-1.png',
+    '/friends-banner-2.png',
+    '/friends-banner-3.png',
+  ];
+
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % heroBanners.length);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -89,13 +106,38 @@ export default function Home() {
 
   return (
     <main className="shop-page">
-      {/* HERO */}
+      {/* HERO SLIDER */}
       <div className="hero-banner">
+        {heroBanners.map((banner, index) => (
+          <img
+            key={banner}
+            src={banner}
+            alt={`Friends Shop Banner ${index + 1}`}
+            className={`hero-slide ${
+              index === heroIndex ? 'active' : ''
+            }`}
+          />
+        ))}
+
         <a
           href="#products"
           className="hero-link"
           aria-label="এখনই শপ করুন"
         />
+
+        <div className="hero-dots">
+          {heroBanners.map((banner, index) => (
+            <button
+              key={banner}
+              type="button"
+              className={`hero-dot ${
+                index === heroIndex ? 'active' : ''
+              }`}
+              onClick={() => setHeroIndex(index)}
+              aria-label={`Banner ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* VOUCHER */}
@@ -395,11 +437,21 @@ export default function Home() {
           border-radius: 14px;
           overflow: hidden;
           margin-bottom: 12px;
-          background-image: url('/hero-banner.png');
-          background-size: 100% 100%;
-          background-repeat: no-repeat;
-          background-color: #f5f5f5;
-          background-position: center;
+          background: #f5f5f5;
+        }
+
+        .hero-slide {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0;
+          transition: opacity 0.6s ease;
+        }
+
+        .hero-slide.active {
+          opacity: 1;
         }
 
         .hero-link {
@@ -407,6 +459,34 @@ export default function Home() {
           inset: 0;
           display: block;
           z-index: 2;
+        }
+
+        .hero-dots {
+          position: absolute;
+          left: 50%;
+          bottom: 10px;
+          transform: translateX(-50%);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          z-index: 3;
+        }
+
+        .hero-dot {
+          width: 7px;
+          height: 7px;
+          padding: 0;
+          border: none;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.65);
+          cursor: pointer;
+          transition: all 0.25s ease;
+        }
+
+        .hero-dot.active {
+          width: 18px;
+          border-radius: 999px;
+          background: #ffffff;
         }
 
         /* VOUCHER */
