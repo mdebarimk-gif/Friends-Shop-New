@@ -381,33 +381,42 @@ export default function Home() {
                 </div>
               </a>
 
-              {/* ADD TO CART */}
-              <button
-                onClick={() => handleAddToCart(product)}
-                disabled={product.stock <= 0}
-                className={
-                  product.stock > 0
-                    ? 'cart-button'
-                    : 'cart-button disabled'
-                }
+              {/* ACTION BUTTONS */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  width: '100%',
+                }}
               >
-                {product.stock > 0
-                  ? '🛒 Add to Cart'
-                  : 'Out of Stock'}
-              </button>
-
-              {/* BUY NOW */}
-              {product.stock > 0 && (
+                {/* ADD TO CART */}
                 <button
-                  onClick={() => {
-                    handleAddToCart(product);
-                    window.location.href = '/cart';
-                  }}
-                  className="buy-button"
+                  onClick={() => handleAddToCart(product)}
+                  disabled={product.stock <= 0}
+                  className={
+                    product.stock > 0
+                      ? 'cart-button'
+                      : 'cart-button disabled'
+                  }
                 >
-                  ⚡ Buy Now
+                  {product.stock > 0
+                    ? '🛒 Add to Cart'
+                    : 'Out of Stock'}
                 </button>
-              )}
+
+                {/* BUY NOW */}
+                {product.stock > 0 && (
+                  <button
+                    onClick={() => {
+                      handleAddToCart(product);
+                      window.location.href = '/cart';
+                    }}
+                    className="buy-button"
+                  >
+                    ⚡ Buy Now
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -810,7 +819,8 @@ export default function Home() {
 
         .cart-button,
         .buy-button {
-          width: 100%;
+          flex: 1;
+          width: auto;
           margin-top: 9px;
           padding: 10px 5px;
           border: none;
