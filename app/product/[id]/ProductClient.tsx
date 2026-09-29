@@ -34,6 +34,7 @@ export default function ProductDetails() {
   const [error, setError] = useState('');
   const [added, setAdded] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
 
@@ -79,6 +80,7 @@ export default function ProductDetails() {
           : [];
 
       setSelectedImage(images[0] || '');
+      setSelectedImageIndex(0);
 
       setLoading(false);
     };
@@ -180,6 +182,31 @@ export default function ProductDetails() {
       : product.image_url
       ? [product.image_url]
       : [];
+
+  // =========================
+  // IMAGE NAVIGATION
+  // =========================
+
+  const showNextImage = () => {
+    if (productImages.length <= 1) return;
+
+    const nextIndex =
+      (selectedImageIndex + 1) % productImages.length;
+
+    setSelectedImageIndex(nextIndex);
+    setSelectedImage(productImages[nextIndex]);
+  };
+
+  const showPreviousImage = () => {
+    if (productImages.length <= 1) return;
+
+    const previousIndex =
+      (selectedImageIndex - 1 + productImages.length) %
+      productImages.length;
+
+    setSelectedImageIndex(previousIndex);
+    setSelectedImage(productImages[previousIndex]);
+  };
 
   // =========================
   // ADD TO CART
@@ -313,6 +340,72 @@ export default function ProductDetails() {
               🛍️
             </div>
           )}
+
+          {productImages.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={showPreviousImage}
+                style={{
+                  position: 'absolute',
+                  left: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '50%',
+                  border: 'none',
+                  backgroundColor: 'rgba(0,0,0,0.55)',
+                  color: '#fff',
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  zIndex: 5,
+                }}
+              >
+                ‹
+              </button>
+
+              <button
+                type="button"
+                onClick={showNextImage}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '50%',
+                  border: 'none',
+                  backgroundColor: 'rgba(0,0,0,0.55)',
+                  color: '#fff',
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  zIndex: 5,
+                }}
+              >
+                ›
+              </button>
+
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '10px',
+                  right: '10px',
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  color: '#fff',
+                  padding: '5px 9px',
+                  borderRadius: '20px',
+                  fontSize: '11px',
+                  fontWeight: '700',
+                }}
+              >
+                {selectedImageIndex + 1} / {productImages.length}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Image Counter */}
@@ -345,7 +438,10 @@ export default function ProductDetails() {
               <button
                 key={`${image}-${index}`}
                 type="button"
-                onClick={() => setSelectedImage(image)}
+                onClick={() => {
+                  setSelectedImage(image);
+                  setSelectedImageIndex(index);
+                }}
                 style={{
                   flexShrink: 0,
                   width: '72px',
