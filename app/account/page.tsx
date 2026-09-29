@@ -117,49 +117,137 @@ export default function AccountPage() {
                 <p><strong>Order ID:</strong> #{order.id}</p>
 
                 <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+                  <strong>🛍️ Products</strong>
+
+                  {Array.isArray(order.items) && order.items.length > 0 ? (
+                    <div style={{ marginTop: "10px" }}>
+                      {order.items.map((item: any, index: number) => (
+                        <div
+                          key={item.id || index}
+                          style={{
+                            display: "flex",
+                            gap: "12px",
+                            alignItems: "center",
+                            padding: "10px 0",
+                            borderBottom:
+                              index < order.items.length - 1
+                                ? "1px solid #eee"
+                                : "none",
+                          }}
+                        >
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt={item.name || "Product"}
+                              style={{
+                                width: "60px",
+                                height: "60px",
+                                objectFit: "cover",
+                                borderRadius: "8px",
+                                border: "1px solid #ddd",
+                              }}
+                            />
+                          )}
+
+                          <div style={{ flex: 1 }}>
+                            <p style={{ margin: "0 0 5px", fontWeight: "bold" }}>
+                              {item.name || "Product"}
+                            </p>
+                            <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>
+                              ৳{item.price} × {item.quantity || 1}
+                            </p>
+                          </div>
+
+                          <strong>
+                            ৳{(item.price || 0) * (item.quantity || 1)}
+                          </strong>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ color: "#777", marginTop: "10px" }}>
+                      Product details পাওয়া যায়নি।
+                    </p>
+                  )}
+                </div>
+
+                <div
+                  style={{
+                    marginTop: "12px",
+                    marginBottom: "12px",
+                    padding: "12px",
+                    background: "#fff",
+                    border: "1px solid #eee",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <strong>🏠 Delivery Address</strong>
+                  <p style={{ margin: "8px 0 0" }}>
+                    <strong>ঠিকানা:</strong> {order.address || "-"}
+                  </p>
+                  <p style={{ margin: "5px 0 0" }}>
+                    <strong>বিভাগ:</strong> {order.division || "-"}
+                  </p>
+                  <p style={{ margin: "5px 0 0" }}>
+                    <strong>জেলা:</strong> {order.district || order.city || "-"}
+                  </p>
+                  <p style={{ margin: "5px 0 0" }}>
+                    <strong>উপজেলা/থানা:</strong> {order.upazila || "-"}
+                  </p>
+                  <p style={{ margin: "5px 0 0" }}>
+                    <strong>এলাকা:</strong> {order.area_type || "-"}
+                  </p>
+                </div>
+
+                <p><strong>Subtotal:</strong> ৳{order.subtotal}</p>
+                <p><strong>Delivery Fee:</strong> ৳{order.delivery_fee}</p>
+                <p><strong>Total:</strong> ৳{order.total}</p>
+                <p><strong>Payment:</strong> {order.payment_method}</p>
+
+                <div style={{ marginTop: "15px", marginBottom: "15px" }}>
                   <strong>📦 Order Status</strong>
 
                   {(() => {
                     const statusMap: Record<string, { icon: string; label: string; bg: string; color: string }> = {
                       pending: {
                         icon: "🕐",
-                        label: "অর্ডার গ্রহণ করা হয়েছে",
+                        label: "অর্ডার গ্রহণ",
                         bg: "#fef3c7",
                         color: "#92400e",
                       },
                       confirmed: {
                         icon: "✅",
-                        label: "অর্ডার নিশ্চিত হয়েছে",
+                        label: "নিশ্চিত",
                         bg: "#dcfce7",
                         color: "#166534",
                       },
                       processing: {
                         icon: "⚙️",
-                        label: "অর্ডার প্রস্তুত হচ্ছে",
+                        label: "প্রস্তুত হচ্ছে",
                         bg: "#dbeafe",
                         color: "#1e40af",
                       },
                       shipping: {
                         icon: "🚚",
-                        label: "অর্ডার পাঠানো হয়েছে",
+                        label: "পাঠানো হয়েছে",
                         bg: "#e0e7ff",
                         color: "#3730a3",
                       },
                       shipped: {
                         icon: "🚚",
-                        label: "অর্ডার পাঠানো হয়েছে",
+                        label: "পাঠানো হয়েছে",
                         bg: "#e0e7ff",
                         color: "#3730a3",
                       },
                       delivered: {
                         icon: "🎉",
-                        label: "অর্ডার পৌঁছে গেছে",
+                        label: "পৌঁছে গেছে",
                         bg: "#dcfce7",
                         color: "#166534",
                       },
                       cancelled: {
                         icon: "❌",
-                        label: "অর্ডার বাতিল হয়েছে",
+                        label: "Order Cancelled",
                         bg: "#fee2e2",
                         color: "#b91c1c",
                       },
@@ -190,6 +278,7 @@ export default function AccountPage() {
                     );
                   })()}
                 </div>
+
                 <p>
                   <strong>Date:</strong>{" "}
                   {order.created_at
