@@ -662,7 +662,7 @@ export default function Home() {
           min-width: 0;
           background: #fff;
           border-radius: 10px;
-          padding: 8px;
+          padding: 6px;
           color: #212121;
           box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
           overflow: hidden;
