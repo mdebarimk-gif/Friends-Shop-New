@@ -44,12 +44,6 @@ export default function AddProduct() {
       console.log('📧 GET USER EMAIL:', userData.user?.email);
       console.log('❌ GET USER ERROR:', userError);
 
-      setMessage(
-        `🔐 User ID: ${data.session.user.id} | Email: ${
-          data.session.user.email || 'N/A'
-        }`
-      );
-
       setCheckingAuth(false);
     };
 
@@ -154,9 +148,6 @@ export default function AddProduct() {
         return;
       }
 
-      console.log('🔐 Product submit user:', authData.user.id);
-      console.log('📧 Product submit email:', authData.user.email);
-
       // Admin account নিশ্চিত করা
       if (authData.user.id !== 'a5e0973b-b8a0-4891-8353-53e130fe51bc') {
         setMessage('❌ এই account থেকে পণ্য যোগ করার অনুমতি নেই।');
@@ -187,21 +178,7 @@ export default function AddProduct() {
           });
 
         if (uploadError) {
-          console.error('❌ STORAGE UPLOAD ERROR:', uploadError);
-          console.error(
-            '❌ STORAGE ERROR DETAILS:',
-            JSON.stringify(uploadError, null, 2)
-          );
-
-          setMessage(
-            `❌ "${imageFile.name}" Upload failed. Code: ${
-              uploadError.name || 'N/A'
-            } | Status: ${
-              uploadError.statusCode || 'N/A'
-            } | Message: ${
-              uploadError.message || 'Unknown error'
-            }`
-          );
+          console.error(uploadError);
 
           // আগে Upload হওয়া ছবিগুলো মুছে ফেলবে
           if (uploadedFilePaths.length > 0) {
