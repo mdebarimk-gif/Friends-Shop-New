@@ -34,6 +34,10 @@ export default function AddProduct() {
         return;
       }
 
+      setMessage(
+        `🔐 Admin User ID: ${data.session.user.id} | Email: ${data.session.user.email || 'N/A'}`
+      );
+
       setCheckingAuth(false);
     };
 
