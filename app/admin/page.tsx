@@ -220,21 +220,6 @@ export default function AdminDashboard() {
         </a>
 
         <a
-          href="/admin/vouchers"
-          style={{
-            backgroundColor: '#7b1fa2',
-            color: '#ffffff',
-            textDecoration: 'none',
-            textAlign: 'center',
-            padding: '14px 8px',
-            borderRadius: '8px',
-            fontSize: '13px',
-            fontWeight: '700',
-          }}
-        >
-          🎟️ Manage Vouchers
-
-        <a
           href="/admin/orders"
           style={{
             backgroundColor: '#f97316',
@@ -248,7 +233,23 @@ export default function AdminDashboard() {
           }}
         >
           📦 Order Management
-        </a>        </a>
+        </a>
+
+        <a
+          href="/admin/vouchers"
+          style={{
+            backgroundColor: '#7b1fa2',
+            color: '#ffffff',
+            textDecoration: 'none',
+            textAlign: 'center',
+            padding: '14px 8px',
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontWeight: '700',
+          }}
+        >
+          🎟️ Manage Vouchers
+        </a>
       </div>
 
       {message && (
