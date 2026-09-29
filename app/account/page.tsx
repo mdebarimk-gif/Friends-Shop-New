@@ -117,176 +117,79 @@ export default function AccountPage() {
                 <p><strong>Order ID:</strong> #{order.id}</p>
 
                 <div style={{ marginTop: "15px", marginBottom: "15px" }}>
-                  <strong>🛍️ Products</strong>
-
-                  {Array.isArray(order.items) && order.items.length > 0 ? (
-                    <div style={{ marginTop: "10px" }}>
-                      {order.items.map((item: any, index: number) => (
-                        <div
-                          key={item.id || index}
-                          style={{
-                            display: "flex",
-                            gap: "12px",
-                            alignItems: "center",
-                            padding: "10px 0",
-                            borderBottom:
-                              index < order.items.length - 1
-                                ? "1px solid #eee"
-                                : "none",
-                          }}
-                        >
-                          {item.image && (
-                            <img
-                              src={item.image}
-                              alt={item.name || "Product"}
-                              style={{
-                                width: "60px",
-                                height: "60px",
-                                objectFit: "cover",
-                                borderRadius: "8px",
-                                border: "1px solid #ddd",
-                              }}
-                            />
-                          )}
-
-                          <div style={{ flex: 1 }}>
-                            <p style={{ margin: "0 0 5px", fontWeight: "bold" }}>
-                              {item.name || "Product"}
-                            </p>
-                            <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>
-                              ৳{item.price} × {item.quantity || 1}
-                            </p>
-                          </div>
-
-                          <strong>
-                            ৳{(item.price || 0) * (item.quantity || 1)}
-                          </strong>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p style={{ color: "#777", marginTop: "10px" }}>
-                      Product details পাওয়া যায়নি।
-                    </p>
-                  )}
-                </div>
-
-                <div
-                  style={{
-                    marginTop: "12px",
-                    marginBottom: "12px",
-                    padding: "12px",
-                    background: "#fff",
-                    border: "1px solid #eee",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <strong>🏠 Delivery Address</strong>
-                  <p style={{ margin: "8px 0 0" }}>
-                    <strong>ঠিকানা:</strong> {order.address || "-"}
-                  </p>
-                  <p style={{ margin: "5px 0 0" }}>
-                    <strong>বিভাগ:</strong> {order.division || "-"}
-                  </p>
-                  <p style={{ margin: "5px 0 0" }}>
-                    <strong>জেলা:</strong> {order.district || order.city || "-"}
-                  </p>
-                  <p style={{ margin: "5px 0 0" }}>
-                    <strong>উপজেলা/থানা:</strong> {order.upazila || "-"}
-                  </p>
-                  <p style={{ margin: "5px 0 0" }}>
-                    <strong>এলাকা:</strong> {order.area_type || "-"}
-                  </p>
-                </div>
-
-                <p><strong>Subtotal:</strong> ৳{order.subtotal}</p>
-                <p><strong>Delivery Fee:</strong> ৳{order.delivery_fee}</p>
-                <p><strong>Total:</strong> ৳{order.total}</p>
-                <p><strong>Payment:</strong> {order.payment_method}</p>
-
-                <div style={{ marginTop: "15px", marginBottom: "15px" }}>
                   <strong>📦 Order Status</strong>
 
-                  {order.status === "cancelled" ? (
-                    <div
-                      style={{
-                        marginTop: "10px",
-                        padding: "12px",
-                        borderRadius: "8px",
-                        background: "#fee2e2",
+                  {(() => {
+                    const statusMap: Record<string, { icon: string; label: string; bg: string; color: string }> = {
+                      pending: {
+                        icon: "🕐",
+                        label: "অর্ডার গ্রহণ করা হয়েছে",
+                        bg: "#fef3c7",
+                        color: "#92400e",
+                      },
+                      confirmed: {
+                        icon: "✅",
+                        label: "অর্ডার নিশ্চিত হয়েছে",
+                        bg: "#dcfce7",
+                        color: "#166534",
+                      },
+                      processing: {
+                        icon: "⚙️",
+                        label: "অর্ডার প্রস্তুত হচ্ছে",
+                        bg: "#dbeafe",
+                        color: "#1e40af",
+                      },
+                      shipping: {
+                        icon: "🚚",
+                        label: "অর্ডার পাঠানো হয়েছে",
+                        bg: "#e0e7ff",
+                        color: "#3730a3",
+                      },
+                      shipped: {
+                        icon: "🚚",
+                        label: "অর্ডার পাঠানো হয়েছে",
+                        bg: "#e0e7ff",
+                        color: "#3730a3",
+                      },
+                      delivered: {
+                        icon: "🎉",
+                        label: "অর্ডার পৌঁছে গেছে",
+                        bg: "#dcfce7",
+                        color: "#166534",
+                      },
+                      cancelled: {
+                        icon: "❌",
+                        label: "অর্ডার বাতিল হয়েছে",
+                        bg: "#fee2e2",
                         color: "#b91c1c",
-                        fontWeight: "bold",
-                        textAlign: "center",
-                      }}
-                    >
-                      ❌ Order Cancelled
-                    </div>
-                  ) : (
-                    <div style={{ marginTop: "15px" }}>
-                      {[
-                        { key: "pending", icon: "🕐", label: "অর্ডার গ্রহণ" },
-                        { key: "confirmed", icon: "✅", label: "নিশ্চিত" },
-                        { key: "processing", icon: "⚙️", label: "প্রস্তুত হচ্ছে" },
-                        { key: "shipped", icon: "🚚", label: "পাঠানো হয়েছে" },
-                        { key: "delivered", icon: "🎉", label: "পৌঁছে গেছে" },
-                      ].map((step, index) => {
-                        const statusOrder = [
-                          "pending",
-                          "confirmed",
-                          "processing",
-                          "shipped",
-                          "delivered",
-                        ];
+                      },
+                    };
 
-                        const currentIndex = statusOrder.indexOf(
-                          order.status || "pending"
-                        );
+                    const currentStatus = order.status || "pending";
+                    const status = statusMap[currentStatus] || {
+                      icon: "📦",
+                      label: currentStatus,
+                      bg: "#f3f4f6",
+                      color: "#374151",
+                    };
 
-                        const stepIndex = statusOrder.indexOf(step.key);
-                        const completed = stepIndex <= currentIndex;
-
-                        return (
-                          <div
-                            key={step.key}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "10px",
-                              marginBottom:
-                                index < 4 ? "8px" : "0",
-                              fontSize: "14px",
-                              fontWeight: completed ? "bold" : "normal",
-                              color: completed ? "#16a34a" : "#999",
-                            }}
-                          >
-                            <span
-                              style={{
-                                width: "28px",
-                                height: "28px",
-                                borderRadius: "50%",
-                                background: completed ? "#dcfce7" : "#f3f4f6",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              {step.icon}
-                            </span>
-
-                            <span>{step.label}</span>
-
-                            {completed && stepIndex === currentIndex && (
-                              <span style={{ marginLeft: "auto", fontSize: "12px" }}>
-                                বর্তমান
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                    return (
+                      <div
+                        style={{
+                          marginTop: "10px",
+                          padding: "12px",
+                          borderRadius: "8px",
+                          background: status.bg,
+                          color: status.color,
+                          fontWeight: "bold",
+                          textAlign: "center",
+                        }}
+                      >
+                        {status.icon} {status.label}
+                      </div>
+                    );
+                  })()}
                 </div>
-
                 <p>
                   <strong>Date:</strong>{" "}
                   {order.created_at
