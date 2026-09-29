@@ -829,7 +829,7 @@ export default function Home() {
           font-size: 12px;
           font-weight: 800;
           cursor: pointer;
-          min-height: 40px;
+          min-height: 34px;
         }
 
         .cart-button {
@@ -972,7 +972,7 @@ export default function Home() {
           .cart-button,
           .buy-button {
             font-size: 11px;
-            min-height: 38px;
+            min-height: 34px;
           }
         }
       `}</style>
