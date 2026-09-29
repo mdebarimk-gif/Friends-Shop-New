@@ -35,6 +35,8 @@ export default function ProductDetails() {
   const [added, setAdded] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
 
@@ -207,6 +209,36 @@ export default function ProductDetails() {
     setSelectedImageIndex(previousIndex);
     setSelectedImage(productImages[previousIndex]);
   };
+    
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    setTouchStartX(e.touches[0].clientX);
+    setTouchEndX(null);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+
+    const distance = touchStartX - touchEndX;
+
+    if (Math.abs(distance) < 50) {
+      setTouchStartX(null);
+      setTouchEndX(null);
+      return;
+    }
+
+    if (distance > 0) {
+      showNextImage();
+    } else {
+      showPreviousImage();
+    }
+
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
 
   // =========================
   // ADD TO CART
@@ -308,6 +340,9 @@ export default function ProductDetails() {
       >
         {/* Main Image */}
         <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           style={{
             minHeight: '300px',
             display: 'flex',
@@ -317,7 +352,8 @@ export default function ProductDetails() {
             borderRadius: '14px',
             overflow: 'hidden',
             boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-          }}
+          touchAction: 'pan-y',
+            }}
         >
           {selectedImage ? (
             <img
