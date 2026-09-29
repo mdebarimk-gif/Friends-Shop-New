@@ -433,7 +433,7 @@ export default function Home() {
           position: relative;
           width: 100%;
           height: auto;
-          aspect-ratio: 3 / 2;
+          aspect-ratio: 2.4 / 1;
           border-radius: 14px;
           overflow: hidden;
           margin-bottom: 12px;
@@ -445,7 +445,7 @@ export default function Home() {
           inset: 0;
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           opacity: 0;
           transition: opacity 0.6s ease;
         }
@@ -844,7 +844,8 @@ export default function Home() {
           }
 
           .hero-banner {
-            height: 280px;
+            aspect-ratio: 2.4 / 1;
+            height: auto;
           }
 
           .category-grid {
@@ -874,7 +875,8 @@ export default function Home() {
           }
 
           .hero-banner {
-            height: 350px;
+            aspect-ratio: 2.4 / 1;
+            height: auto;
           }
 
           .product-grid {
