@@ -15,13 +15,8 @@ export default function ShoppingCart() {
     cart.length > 0 &&
     cart.every((item) => item.tag === 'Free Shipping 🚚');
 
-  const deliveryFee =
-    cart.length === 0
-      ? 0
-      : hasFreeShipping
-        ? 0
-        : 60;
-  const total = subtotal + deliveryFee;
+  const deliveryFee = hasFreeShipping ? 0 : null;
+  const total = subtotal;
 
   const decreaseQuantity = (id: number) => {
     const item = cart.find((product) => product.id === id);
@@ -372,7 +367,7 @@ export default function ShoppingCart() {
                   fontWeight: deliveryFee === 0 ? '700' : '500',
                 }}
               >
-                {deliveryFee === 0 ? 'FREE' : `৳${deliveryFee}`}
+                {deliveryFee === 0 ? 'FREE' : 'Checkout-এ নির্ধারিত হবে'}
               </span>
             </div>
 
