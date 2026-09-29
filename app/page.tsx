@@ -34,7 +34,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   const heroBanners = [
-    '/hero-banner.png',
     '/friends-banner-1.png',
     '/friends-banner-2.png',
     '/friends-banner-3.png',
@@ -58,7 +57,7 @@ export default function Home() {
 
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('id, title, price, old_price, category, stock, tag, description, image_url')
         .order('id', { ascending: false });
 
       if (error) {
