@@ -187,7 +187,21 @@ export default function AddProduct() {
           });
 
         if (uploadError) {
-          console.error(uploadError);
+          console.error('❌ STORAGE UPLOAD ERROR:', uploadError);
+          console.error(
+            '❌ STORAGE ERROR DETAILS:',
+            JSON.stringify(uploadError, null, 2)
+          );
+
+          setMessage(
+            `❌ "${imageFile.name}" Upload failed. Code: ${
+              uploadError.name || 'N/A'
+            } | Status: ${
+              uploadError.statusCode || 'N/A'
+            } | Message: ${
+              uploadError.message || 'Unknown error'
+            }`
+          );
 
           // আগে Upload হওয়া ছবিগুলো মুছে ফেলবে
           if (uploadedFilePaths.length > 0) {
