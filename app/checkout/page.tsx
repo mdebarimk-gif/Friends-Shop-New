@@ -1017,6 +1017,36 @@ const divisionDistricts: Record<string, string[]> = {
               >
                 🟣 bKash Personal
               </div>
+              <div
+                style={{
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  color: '#e2136e',
+                  marginTop: '4px',
+                }}
+              >
+                📱 01994245811
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText('01994245811');
+                  alert('bKash Number কপি হয়েছে');
+                }}
+                style={{
+                  marginTop: '4px',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '4px 8px',
+                  backgroundColor: '#fce7f3',
+                  color: '#be185d',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                }}
+              >
+                📋 Copy Number
+              </button>
             </div>
 
             <button
@@ -1077,6 +1107,36 @@ const divisionDistricts: Record<string, string[]> = {
               >
                 🟢 Nagad Personal
               </div>
+              <div
+                style={{
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  color: '#f58220',
+                  marginTop: '4px',
+                }}
+              >
+                📱 01994245811
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText('01994245811');
+                  alert('Nagad Number কপি হয়েছে');
+                }}
+                style={{
+                  marginTop: '4px',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '4px 8px',
+                  backgroundColor: '#ffedd5',
+                  color: '#c2410c',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                }}
+              >
+                📋 Copy Number
+              </button>
             </div>
 
             <button
