@@ -236,6 +236,22 @@ export default function AdminDashboard() {
         </a>
 
         <a
+          href="/admin/analytics"
+          style={{
+            backgroundColor: '#1565c0',
+            color: '#ffffff',
+            textDecoration: 'none',
+            textAlign: 'center',
+            padding: '14px 8px',
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontWeight: '700',
+          }}
+        >
+          📊 Analytics
+        </a>
+
+        <a
           href="/admin/vouchers"
           style={{
             backgroundColor: '#7b1fa2',
