@@ -18,8 +18,22 @@ type ProductSale = {
   revenue: number;
 };
 
+type VisitorStats = {
+  total_visitors: number;
+  today_visitors: number;
+  logged_in_visitors: number;
+  today_logged_in_visitors: number;
+};
+
 export default function AnalyticsPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [visitorStats, setVisitorStats] = useState<VisitorStats>({
+    total_visitors: 0,
+    today_visitors: 0,
+    logged_in_visitors: 0,
+    today_logged_in_visitors: 0,
+  });
+
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<"7" | "30" | "all">("7");
 
@@ -30,18 +44,37 @@ export default function AnalyticsPage() {
   async function loadAnalytics() {
     setLoading(true);
 
-    const { data, error } = await supabase
-      .from("orders")
-      .select("id, customer_name, total, status, items, created_at")
-      .order("created_at", { ascending: false });
+    const [{ data: orderData, error: orderError }, { data: visitorData, error: visitorError }] =
+      await Promise.all([
+        supabase
+          .from("orders")
+          .select("id, customer_name, total, status, items, created_at")
+          .order("created_at", { ascending: false }),
 
-    if (error) {
-      console.error("Analytics error:", error);
-      setLoading(false);
-      return;
+        supabase.rpc("get_admin_visitor_stats"),
+      ]);
+
+    if (orderError) {
+      console.error("Analytics order error:", orderError);
     }
 
-    setOrders((data || []) as Order[]);
+    if (visitorError) {
+      console.error("Visitor stats error:", visitorError);
+    }
+
+    setOrders((orderData || []) as Order[]);
+
+    if (visitorData) {
+      setVisitorStats({
+        total_visitors: Number(visitorData.total_visitors || 0),
+        today_visitors: Number(visitorData.today_visitors || 0),
+        logged_in_visitors: Number(visitorData.logged_in_visitors || 0),
+        today_logged_in_visitors: Number(
+          visitorData.today_logged_in_visitors || 0
+        ),
+      });
+    }
+
     setLoading(false);
   }
 
@@ -60,7 +93,6 @@ export default function AnalyticsPage() {
 
     const days = Number(period);
     const since = new Date();
-
     since.setDate(since.getDate() - days);
 
     return completedOrders.filter(
@@ -151,6 +183,7 @@ export default function AnalyticsPage() {
 
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date();
+
       date.setHours(0, 0, 0, 0);
       date.setDate(date.getDate() - i);
 
@@ -162,7 +195,8 @@ export default function AnalyticsPage() {
       );
 
       const sales = dayOrders.reduce(
-        (sum, order) => sum + Number(order.total || 0),
+        (sum, order) =>
+          sum + Number(order.total || 0),
         0
       );
 
@@ -245,7 +279,7 @@ export default function AnalyticsPage() {
                 fontSize: "14px",
               }}
             >
-              Friends Shop-এর বিক্রির বিস্তারিত রিপোর্ট
+              Friends Shop-এর বিক্রি, Visitor ও User রিপোর্ট
             </p>
           </div>
 
@@ -297,9 +331,86 @@ export default function AnalyticsPage() {
           >
             📊 সব সময়
           </button>
+
+          <button
+            onClick={loadAnalytics}
+            style={{
+              ...filterButton(false),
+              marginLeft: "auto",
+            }}
+          >
+            🔄 Refresh
+          </button>
         </div>
 
-        {/* Stats */}
+        {/* Visitor Stats */}
+        <section style={sectionStyle}>
+          <h2 style={sectionTitle}>
+            👥 Visitor & User Analytics
+          </h2>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(180px, 1fr))",
+              gap: "14px",
+            }}
+          >
+            <StatCard
+              icon="👀"
+              title="মোট Visitor"
+              value={visitorStats.total_visitors.toLocaleString(
+                "bn-BD"
+              )}
+              background="#e3f2fd"
+            />
+
+            <StatCard
+              icon="📅"
+              title="আজকের Visitor"
+              value={visitorStats.today_visitors.toLocaleString(
+                "bn-BD"
+              )}
+              background="#e8f5e9"
+            />
+
+            <StatCard
+              icon="👤"
+              title="Logged-in Visitor"
+              value={visitorStats.logged_in_visitors.toLocaleString(
+                "bn-BD"
+              )}
+              background="#fff3e0"
+            />
+
+            <StatCard
+              icon="🟢"
+              title="আজকের Logged-in Visitor"
+              value={visitorStats.today_logged_in_visitors.toLocaleString(
+                "bn-BD"
+              )}
+              background="#f3e5f5"
+            />
+          </div>
+
+          <div
+            style={{
+              marginTop: "14px",
+              padding: "14px",
+              background: "#f8f9fa",
+              borderRadius: "8px",
+              color: "#666",
+              fontSize: "13px",
+            }}
+          >
+            💡 Visitor সংখ্যা একই ব্রাউজারকে একই Visitor হিসেবে
+            গণনা করে। একই দিনে একই ব্রাউজার বারবার ঢুকলে নতুন Visitor
+            হিসেবে গণনা হবে না।
+          </div>
+        </section>
+
+        {/* Sales Stats */}
         <div
           style={{
             display: "grid",
@@ -600,7 +711,9 @@ function StatCard({
         boxSizing: "border-box",
       }}
     >
-      <div style={{ fontSize: "24px" }}>{icon}</div>
+      <div style={{ fontSize: "24px" }}>
+        {icon}
+      </div>
 
       <div
         style={{
